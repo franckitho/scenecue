@@ -1,7 +1,7 @@
 const { contextBridge, ipcRenderer, webUtils } = require('electron');
 
 // Exposé à la fenêtre SceneCue et à l'overlay (pas aux iframes des modules : eux passent par sceneCueBridge).
-const CHANNELS = ['live', 'displays', 'modules', 'scene', 'layer-state', 'enter', 'leave', 'module-event'];
+const CHANNELS = ['live', 'displays', 'virtual', 'modules', 'scene', 'layer-state', 'enter', 'leave', 'module-event'];
 
 contextBridge.exposeInMainWorld('host', {
   init: () => ipcRenderer.invoke('init'),
@@ -12,6 +12,7 @@ contextBridge.exposeInMainWorld('host', {
   setLive: (sceneId) => ipcRenderer.send('live', sceneId),
   resetTimer: () => ipcRenderer.send('timer-reset'),
   setDisplay: (id) => ipcRenderer.send('display', id),
+  setMirror: (id) => ipcRenderer.send('mirror', id),
   setLang: (lang) => ipcRenderer.send('lang', lang),
   // médiathèque
   pickMedia: () => ipcRenderer.invoke('media-pick'),

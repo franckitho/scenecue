@@ -66,6 +66,8 @@ let selected = { scene: null, layer: null };
 let shared = {};
 let displays = [];
 let displayId = null;
+let mirrorId = null; // écran de diffusion (copie de l'écran de sortie) : id, 'virtual', ou null (par-dessus l'écran)
+let virtualInfo = { available: false, error: null }; // pilote d'écran virtuel installé, dernière erreur
 let live = { scene: null, since: null };
 let hotkeys = {};
 let panel = null; // { sceneId, layerId, module, bridge }
@@ -76,6 +78,7 @@ const selScene = () => sceneById(selected.scene);
 const findLayer = (sceneId, layerId) => { const s = sceneById(sceneId); return s ? s.layers.find((l) => l.id === layerId) || null : null; };
 const currentDisplay = () => displays.find((d) => d.id === displayId) || displays.find((d) => d.primary) || displays[0]
   || { id: 0, index: 1, primary: true, width: 1920, height: 1080, pxW: 1920, pxH: 1080 };
+const mirrorDisplay = () => displays.find((d) => (mirrorId === 'virtual' ? d.virtual : d.id === mirrorId) && d.id !== currentDisplay().id) || null;
 const compositorUrl = (q) => `${ORIGIN}/src/renderer/compositor.html?${new URLSearchParams({ ...q, lang: LANG })}`;
 
 function saveStructure() {
@@ -570,12 +573,45 @@ function buildDisplays() {
   const sel = $('#display');
   sel.replaceChildren();
   for (const d of displays) {
+    if (d.virtual) continue;
     const o = el('option', '', `${_('Écran {n}', { n: d.index })} · ${d.pxW}×${d.pxH}`);
     o.value = d.id;
     if (d.primary) o.title = _('Écran principal');
     sel.append(o);
   }
   sel.value = currentDisplay().id;
+  buildMirror();
+}
+// diffusion : par-dessus l'écran de sortie, ou sur une copie de cet écran affichée sur un autre écran
+function buildMirror() {
+  const sel = $('#mirror');
+  sel.replaceChildren();
+  const over = el('option', '', _("Par-dessus l'écran"));
+  over.value = '';
+  sel.append(over);
+  for (const d of displays) {
+    if (d.virtual || d.id === currentDisplay().id) continue;
+    const o = el('option', '', _("Copie sur l'écran {n}", { n: d.index }));
+    o.value = d.id;
+    sel.append(o);
+  }
+  if (virtualInfo.available || mirrorId === 'virtual') {
+    const o = el('option', '', _('Écran virtuel'));
+    o.value = 'virtual';
+    sel.append(o);
+  }
+  sel.disabled = sel.options.length < 2;
+  const m = mirrorDisplay();
+  const virt = mirrorId === 'virtual';
+  sel.value = virt ? 'virtual' : m ? m.id : '';
+  const note = $('#mirror-note');
+  note.hidden = !m && !virt;
+  if (virt && virtualInfo.error) note.textContent = _("Impossible d'allumer l'écran virtuel : {error}", { error: virtualInfo.error });
+  else if (virt && !m) note.textContent = _("Allumage de l'écran virtuel…");
+  else if (virt) note.innerHTML = _("Dans Discord, partage <b>l'écran virtuel</b> · {size} en entier : sa vignette montre ta scène, et le son passe avec. SceneCue l'allume tant que ce réglage est choisi, et l'éteint en quittant.", { size: `${m.pxW}×${m.pxH}` });
+  else if (m) note.innerHTML = _("Dans Discord, partage <b>l'écran {n}</b> · {size} en entier : le son passe avec. Tout ce que tu y poses est diffusé, sauf SceneCue.", { n: m.index, size: `${m.pxW}×${m.pxH}` });
+  $('#tip').innerHTML = virt ? _("Dans Discord, partage <b>l'écran virtuel</b> en entier.")
+    : m ? _("Dans Discord, partage <b>l'écran {n}</b> en entier.", { n: m.index }) : _("Dans Discord, partage <b>l'écran entier</b>.");
 }
 function displayChanged() {
   refreshMonitor();
@@ -583,8 +619,16 @@ function displayChanged() {
 }
 $('#display').addEventListener('change', (e) => {
   displayId = Number(e.target.value);
+  if (mirrorId === displayId) mirrorId = null; // comme le processus principal : pas de copie sur l'écran copié
   host.setDisplay(displayId);
+  buildMirror();
   displayChanged();
+});
+$('#mirror').addEventListener('change', (e) => {
+  const v = e.target.value;
+  mirrorId = v === 'virtual' ? v : v ? Number(v) : null;
+  host.setMirror(mirrorId);
+  buildMirror();
 });
 
 // ---------- menu des modules ----------
@@ -623,6 +667,8 @@ for (const t of ['dragover', 'drop']) document.addEventListener(t, (e) => e.prev
   shared = init.store.shared || {};
   displays = init.displays || [];
   displayId = init.store.display;
+  mirrorId = init.store.mirror ?? null;
+  virtualInfo = init.virtual || virtualInfo;
   live = init.live || { scene: null, since: null };
   hotkeys = init.hotkeys || {};
 
@@ -639,5 +685,6 @@ for (const t of ['dragover', 'drop']) document.addEventListener(t, (e) => e.prev
   host.on('live', onLive);
   host.on('module-event', onModuleEvent);
   host.on('displays', (d) => { displays = d; buildDisplays(); displayChanged(); });
+  host.on('virtual', (v) => { virtualInfo = v; buildMirror(); });
   setInterval(updateTransport, 500);
 })();

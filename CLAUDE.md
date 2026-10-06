@@ -24,6 +24,7 @@ npx electron scripts/snap-media.js <dir>     # Image / video module: 31 checks i
 npx electron scripts/snap-cam.js <dir>       # Camera module: 27 checks (fake camera, simulated iPhone)
 npx electron scripts/snap-music.js <dir>     # Now playing module: 36 checks (simulated Spotify, then the real PowerShell once)
 npx electron scripts/snap-i18n.js <dir>      # English UI: 17 checks, reports any French left on screen
+npx electron scripts/snap-mirror.js <dir>    # Broadcast window: 23 checks (two screens), 29 with Virtual Display Driver (plugs/unplugs the virtual screen, ends with app.quit)
 node media/scripts/make-icon.js             # regenerates a module icon (same for cam/scripts; npm run icon for SceneCue)
 cd text-animated && npm start               # Animated text module on its own ("Pancarte")
 ```
@@ -34,12 +35,14 @@ The `snap*.js` scenarios start the real app with a temporary profile (`<dir>/use
 
 **One origin, `scenecue://app`.** `src/main.js` registers a protocol serving the repository root (or `app.asar`). Module pages are loaded in iframes on the same origin, which lets them get their bridge through `window.parent.sceneCueBridge(window)`. The `/@media/<file>` route serves the media library (`userData/media`) with `Range` support, which video seeking requires.
 
-**Main process is the source of truth.** `scenecue.json` (in userData, i.e. `%APPDATA%\SceneCue`) holds `scenes[] → layers[] { id, module, name, visible, state }`, `shared[moduleId]`, `media[]`, `selected`, `display`, `lang`. In `layers` the order is bottom to top (the on-screen list is reversed). The SceneCue window sends the structure (`scenes`) and each layer's state (`layer-state`); the main process saves, then relays to the overlay if the scene is on screen. It also owns the global shortcuts Ctrl+Alt+B and Ctrl+Alt+1…9 (which clash with Pancarte).
+**Main process is the source of truth.** `scenecue.json` (in userData, i.e. `%APPDATA%\SceneCue`) holds `scenes[] → layers[] { id, module, name, visible, state }`, `shared[moduleId]`, `media[]`, `selected`, `display`, `mirror`, `lang`. In `layers` the order is bottom to top (the on-screen list is reversed). The SceneCue window sends the structure (`scenes`) and each layer's state (`layer-state`); the main process saves, then relays to the overlay if the scene is on screen. It also owns the global shortcuts Ctrl+Alt+B and Ctrl+Alt+1…9 (which clash with Pancarte).
 
 **Two windows, one compositor.**
 - `index.html` + `scenecue.js`: the main window (scenes, layers, the layer editor in an iframe, putting on screen).
 - `compositor.html` + `compositor.js`: stacks one iframe per layer and gives each its bridge.
   - With `?mode=overlay` it is the full-screen overlay, driven over IPC, with `backgroundThrottling: false`.
+  - With `?mode=mirror` it is the broadcast window, used instead of the overlay when `store.mirror` names another screen ("Broadcast" menu). Fullscreen on that screen, always shown (even off air), it plays a live copy of the `display` screen (`getDisplayMedia`) in a `.stage` sized to that screen's ratio, with the layers on top; Discord shares that screen, so system audio comes along. Only this window may capture the screen (`setDisplayMediaRequestHandler` in `main.js`), and while it exists the SceneCue window is excluded from captures (`setContentProtection`). `applyOutput()` recreates the output window when the mode or screens change; after a cut it empties the scene instead of hiding the window.
+  - `store.mirror` may also be `'virtual'`: the screen of the Virtual Display Driver (Electron `display.label` "VDD by MTT", hidden from the screen menus and numbering). `syncVirtual()` plugs it in while that setting is chosen (resolution of the `display` screen, touching the rightmost screen only by its top-right corner so the mouse can't slip onto it), and unplugs it when leaving the setting or in `will-quit`; otherwise SceneCue never touches it. `src/vdisplay.js` runs `src/vdisplay.ps1` (Windows PowerShell 5.1, C# through `Add-Type`, `ChangeDisplaySettingsEx`, no admin rights) via `-EncodedCommand`, since PowerShell can't read inside `app.asar`. The driver's own named pipe (`MTTVirtualDisplayPipe`) isn't used: its reload command is broken.
   - Without it, an embedded preview (the "Preview" thumbnail, layers above/below behind an editor), fed through `window.top.sceneCueFeed` with the `scene`, `ref` and `only=below|above` parameters.
 - `src/preload.js` is only injected into those top-level windows (`host` object). Module iframes never reach it directly: they go through the bridge built in `scenecue.js` (`makePanelBridge`) or in `compositor.js`.
 

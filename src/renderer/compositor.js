@@ -1,6 +1,8 @@
 /* SceneCue — compositeur de scène.
  * Empile les calques (une iframe par instance de module) et leur fournit leur bridge.
  *  - mode=overlay : la fenêtre plein écran transparente, pilotée par le processus principal.
+ *  - mode=mirror : la fenêtre de diffusion, sur un autre écran. Même rôle que l'overlay, mais les calques
+ *    sont posés sur une copie en direct de l'écran (getDisplayMedia, source choisie par le processus principal).
  *  - sinon : aperçu intégré (vignette, arrière-plan d'un éditeur), alimenté par la fenêtre SceneCue
  *    via window.top.sceneCueFeed. Paramètres : scene=<id>|@selected, ref=<calque>, only=below|above.
  */
@@ -8,13 +10,15 @@
   'use strict';
 
   const params = new URLSearchParams(location.search);
-  const isOverlay = params.get('mode') === 'overlay' && !!window.host;
+  const isMirror = params.get('mode') === 'mirror' && !!window.host;
+  const isOverlay = (params.get('mode') === 'overlay' || isMirror) && !!window.host; // la vraie sortie
   const LEAVE_MS = 450;
 
   let modules = new Map();
   let shown = !isOverlay; // les aperçus sont toujours visibles, sans animation d'entrée
   let liveInfo = { live: false, since: null };
   const items = new Map(); // id du calque -> instance
+  let root = document.body; // conteneur des calques (la scène, en mode mirror)
 
   // appelé par les pages des calques (même origine) pour obtenir leur bridge
   window.sceneCueBridge = (win) => {
@@ -84,7 +88,7 @@
         L = makeLayer(l);
         if (!L) return;
         items.set(l.id, L);
-        document.body.append(L.iframe);
+        root.append(L.iframe);
       } else {
         const json = JSON.stringify(l.state);
         if (json !== L.json) {
@@ -115,6 +119,38 @@
 
   const api = { setModules, setLayers, setLayerState, setLive, enter, leave, moduleEvent, params };
   window.compositor = api;
+
+  // Copie de l'écran : une vidéo sous les calques, dans une scène au format de l'écran copié (bandes noires
+  // si l'écran de diffusion n'a pas le même format). Les calques se placent ainsi comme dans l'overlay.
+  function startMirror() {
+    document.body.classList.add('mirror');
+    const stage = document.createElement('div');
+    stage.className = 'stage';
+    const video = document.createElement('video');
+    video.className = 'screen';
+    video.muted = true;
+    video.autoplay = true;
+    stage.append(video);
+    document.body.append(stage);
+    root = stage;
+    video.addEventListener('resize', () => {
+      if (video.videoWidth && video.videoHeight) stage.style.setProperty('--ar', String(video.videoWidth / video.videoHeight));
+    });
+    const capture = async () => {
+      try {
+        const stream = await navigator.mediaDevices.getDisplayMedia({ video: { frameRate: { ideal: 60 } }, audio: false });
+        video.srcObject = stream;
+        // capture interrompue (écran débranché, veille…) : on recommence
+        stream.getVideoTracks()[0].addEventListener('ended', () => setTimeout(capture, 1000));
+      } catch (e) {
+        console.error("capture de l'écran impossible", e);
+        setTimeout(capture, 3000);
+      }
+    };
+    capture();
+  }
+
+  if (isMirror) startMirror();
 
   if (isOverlay) {
     host.on('modules', setModules);

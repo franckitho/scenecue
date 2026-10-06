@@ -58,8 +58,15 @@
     </section>
 
     <footer class="side-foot">
-      <span class="label">Sortie</span>
-      <div class="select-wrap"><select id="display" class="select" title="Écran où les scènes s'affichent"></select></div>
+      <div class="foot-row">
+        <span class="label">Sortie</span>
+        <div class="select-wrap"><select id="display" class="select" title="Écran où les scènes s'affichent"></select></div>
+      </div>
+      <div class="foot-row">
+        <span class="label">Diffusion</span>
+        <div class="select-wrap"><select id="mirror" class="select" title="Par-dessus l'écran, ou sur une copie de l'écran affichée sur un autre écran : ton écran reste dégagé"></select></div>
+      </div>
+      <p class="foot-note" id="mirror-note" hidden></p>
     </footer>
   </aside>
 
@@ -89,7 +96,7 @@
     <span class="hk"><kbd>Ctrl</kbd><kbd>Alt</kbd><kbd>B</kbd><span>afficher / couper</span></span>
     <span class="hk" id="hk-scenes"><kbd>Ctrl</kbd><kbd>Alt</kbd><kbd>1</kbd><span class="hk-dash">–</span><kbd>9</kbd><span>scène n°</span></span>
   </div>
-  <p class="tip" data-i18n>Dans Discord, partage <b>l'écran entier</b>.</p>
+  <p class="tip" id="tip" data-i18n>Dans Discord, partage <b>l'écran entier</b>.</p>
 </footer>
 
 <div class="menu" id="module-menu" hidden></div>

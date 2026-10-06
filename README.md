@@ -78,7 +78,8 @@ npm start
 2. **Layers**: `+` to add a module to the scene. The top layer is drawn over the others.
    Click a layer to edit it: the scene's other layers stay visible behind the preview.
 3. **Put on screen** shows the selected scene. If another scene is already on screen, the button becomes **Switch to…**.
-4. In Discord, share your **entire screen** (not a window) and pick the screen set as **Output** at the bottom left of SceneCue.
+4. In Discord, share your **entire screen** (not a window) and pick the screen set as **Output** at the bottom left of SceneCue,
+   or the **Broadcast** screen if you set one (see below).
 
 | Shortcut (anywhere) | Action |
 |---|---|
@@ -87,6 +88,45 @@ npm start
 
 If you close the window while a scene is on screen, SceneCue goes to the notification area.
 Right-click its icon to switch scenes or quit.
+
+### Keep your screen clear
+
+The more layers you stack, the less you see of your own screen. With a second screen, set **Broadcast**
+(bottom left) to **Copy on screen N**: SceneCue shows a live copy of the **Output** screen with the scene on top,
+full screen on that other screen, and nothing covers your own screen anymore. In Discord, share that other screen
+in full: the sound comes along, as with any screen share. The SceneCue window never shows in the copy or in the stream.
+
+Everything else on the broadcast screen goes on air, Discord included. To keep all your screens free, use a
+**virtual screen** instead: a screen that only exists for Windows, that nobody needs to look at.
+
+#### Virtual screen
+
+SceneCue drives the free [Virtual Display Driver](https://github.com/VirtualDrivers/Virtual-Display-Driver)
+(open source, MIT, signed, Windows 10 and 11). Install it once:
+
+1. Install the package, from its [releases](https://github.com/VirtualDrivers/Virtual-Display-Driver/releases)
+   or with winget:
+   ```bash
+   winget install VirtualDrivers.Virtual-Display-Driver
+   ```
+2. winget only downloads it. Open **VDD Control**
+   (with winget: `%LOCALAPPDATA%\Microsoft\WinGet\Packages\VirtualDrivers.Virtual-Display-Driver_…\VDD Control.exe`)
+   and click **Install Driver**, then accept the administrator prompt. A third screen appears in Windows:
+   leave it as it is, SceneCue takes care of it.
+
+Then, each time you stream:
+
+1. In SceneCue, set **Broadcast** to **Virtual screen** (it shows up as soon as the driver is installed).
+2. In Discord, share the virtual screen in full: its thumbnail shows your game with the scene on top.
+
+SceneCue turns the virtual screen on while **Broadcast** is set to it, and turns it off when you change this
+setting or quit SceneCue: it doesn't stay around as a third screen. When it turns it on, SceneCue sets it to
+the resolution of the **Output** screen (2560×1440 for a 1440p screen) and places it so that it only touches your
+other screens by a corner, so your mouse can't slip onto it. No administrator rights needed: it works like
+*Disconnect this display* in Windows' display settings. When **Broadcast** is set to something else,
+SceneCue leaves the virtual screen alone.
+
+Your screens may blink for a second when the virtual screen turns on or off: Windows rearranges the displays.
 
 ## Modules
 
@@ -159,7 +199,10 @@ While Spotify is closed, the editor's preview shows a sample song and the card s
 
 | Problem | Solution |
 |---|---|
-| The scene doesn't show in the stream | Share your **entire screen** in Discord, not a window, and check the **Output** screen in SceneCue. |
+| The scene doesn't show in the stream | Share your **entire screen** in Discord, not a window: the **Output** screen, or the **Broadcast** screen if you set one. |
+| The scenes cover your screen | Set **Broadcast** to a copy on another screen, real or virtual (see [Keep your screen clear](#keep-your-screen-clear)). |
+| No **Virtual screen** in the Broadcast menu | The driver package is downloaded but not installed: open **VDD Control** and click **Install Driver** (see [Virtual screen](#virtual-screen)). |
+| Discord doesn't list the virtual screen | It only exists while SceneCue is open with **Broadcast** set to **Virtual screen**: set it first, then share. |
 | A game covers the scene | Switch the game to **borderless windowed**: exclusive fullscreen covers everything. |
 | Ctrl+Alt+B does nothing | Another application already uses this shortcut (for example Pancarte, running at the same time): it then shows greyed out at the bottom of SceneCue's window. |
 | The iPhone can't open the page | Same Wi-Fi on both sides. On first launch, Windows asks for network access: allow **private networks**. If your Wi-Fi profile is **public**, switch it to **private**. Several network adapters (VPN, WSL, virtual machines): pick the right one under **Network adapter**. |
@@ -231,6 +274,7 @@ npx electron scripts/snap-media.js <folder>   # Image / video: 31 checks (result
 npx electron scripts/snap-cam.js <folder>     # Camera: 27 checks, with a simulated iPhone
 npx electron scripts/snap-music.js <folder>   # Now playing: 36 checks, with a simulated Spotify
 npx electron scripts/snap-i18n.js <folder>    # English interface: no French left, switch back to French
+npx electron scripts/snap-mirror.js <folder>  # Broadcast on another screen: 23 checks (two screens), 29 with the virtual screen
 ```
 
 Each takes about a minute and opens windows. They are muted, and the camera scenarios use Chromium's fake camera:
@@ -290,6 +334,7 @@ Contributions are welcome: new modules, fixes, ideas.
 
 - **Windows only** for now: global shortcuts, the overlay and the build target Windows 10 and 11.
 - Interface in French and English only.
+- The virtual screen needs [Virtual Display Driver](https://github.com/VirtualDrivers/Virtual-Display-Driver); other virtual display drivers aren't recognized.
 - The iPhone camera depends on Safari: screen on and page in the foreground while streaming.
 
 ## Credits

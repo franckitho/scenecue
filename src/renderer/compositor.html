@@ -16,6 +16,19 @@
       pointer-events: none;
       color-scheme: normal; /* identique aux pages des calques : sinon Chromium les rend opaques */
     }
+    /* fenêtre de diffusion : copie de l'écran sous les calques */
+    body.mirror { background: #000; }
+    .stage {
+      --ar: 1.7778; /* largeur / hauteur de l'écran copié, donnée par la vidéo */
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      width: min(100vw, 100vh * var(--ar));
+      height: min(100vh, 100vw / var(--ar));
+      transform: translate(-50%, -50%);
+      overflow: hidden;
+    }
+    .screen { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: fill; }
   </style>
 </head>
 <body>

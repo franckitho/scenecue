@@ -1,8 +1,9 @@
-const { app, BrowserWindow, ipcMain, screen, globalShortcut, Tray, Menu, nativeImage, protocol, net, dialog } = require('electron');
+const { app, BrowserWindow, ipcMain, screen, globalShortcut, Tray, Menu, nativeImage, protocol, net, dialog, session, desktopCapturer } = require('electron');
 const path = require('path');
 const fs = require('fs');
 const { Readable } = require('stream');
 const { pathToFileURL } = require('url');
+const vdisplay = require('./vdisplay');
 
 // Tout (SceneCue, compositeur, modules) est servi par scenecue://app pour partager la même origine :
 // les pages des modules, chargées en iframe, récupèrent ainsi leur bridge auprès de la page parente.
@@ -50,7 +51,8 @@ function migrateFromRegie() {
 migrateFromRegie();
 
 let win = null;
-let overlay = null;
+let overlay = null; // la sortie : l'overlay transparent, ou la fenêtre de diffusion (copie sur un autre écran)
+let overlayKey = null; // mode de sortie de cette fenêtre (outputKey)
 let tray = null;
 let modules = [];
 const backendFiles = new Map(); // id du module -> script Node déclaré par "main" dans module.json
@@ -152,7 +154,7 @@ function importPancarte() {
 }
 
 function defaultStore() {
-  const s = { version: 1, scenes: [], selected: { scene: null, layer: null }, display: null, shared: {}, media: [] };
+  const s = { version: 1, scenes: [], selected: { scene: null, layer: null }, display: null, mirror: null, shared: {}, media: [] };
   const text = localModules().find((m) => m.id === 'text-animated');
   const old = importPancarte();
   const add = (name, state) => {
@@ -175,6 +177,7 @@ function loadStore() {
     store.shared = store.shared || {};
     store.selected = store.selected || { scene: null, layer: null };
     store.media = Array.isArray(store.media) ? store.media : [];
+    if (typeof store.mirror !== 'number' && store.mirror !== 'virtual') store.mirror = null;
   } catch {
     store = defaultStore();
     saveStore();
@@ -239,11 +242,16 @@ async function serveMedia(req, name) {
 }
 
 // ---------- écrans ----------
+// écran créé par le pilote Virtual Display Driver (nom donné par son EDID)
+const isVirtual = (d) => /VDD by MTT/i.test(d.label || '');
+
 function displaysInfo() {
   const primary = screen.getPrimaryDisplay();
-  return screen.getAllDisplays().map((d, i) => ({
+  let n = 0; // numéros des vrais écrans seulement : ils ne changent pas quand l'écran virtuel va et vient
+  return screen.getAllDisplays().map((d) => ({
     id: d.id,
-    index: i + 1,
+    index: isVirtual(d) ? 0 : ++n,
+    virtual: isVirtual(d),
     primary: d.id === primary.id,
     width: d.size.width,
     height: d.size.height,
@@ -253,13 +261,69 @@ function displaysInfo() {
 }
 const targetDisplay = () => screen.getAllDisplays().find((d) => d.id === store.display) || screen.getPrimaryDisplay();
 
+// Écran de diffusion : au lieu de se poser par-dessus l'écran, la scène s'affiche sur une copie de cet écran,
+// dans une fenêtre plein écran sur un autre écran. Discord partage cet autre écran : ton écran reste dégagé.
+const mirrorDisplay = () => {
+  const all = screen.getAllDisplays();
+  const d = store.mirror === 'virtual' ? all.find(isVirtual) : all.find((x) => x.id === store.mirror);
+  return d && d.id !== targetDisplay().id ? d : null;
+};
+const isMirror = () => !!overlay && overlayKey !== 'overlay';
+// change quand la fenêtre de sortie doit être recréée (mode, écran copié, écran de diffusion déplacé)
+const outputKey = () => {
+  const m = mirrorDisplay();
+  return m ? `mirror:${targetDisplay().id}:${m.id}:${Object.values(m.bounds).join(',')}` : 'overlay';
+};
+const outputUrl = () => pageUrl('compositor.html', overlayKey === 'overlay' ? 'mode=overlay' : 'mode=mirror');
+
+// ---------- écran virtuel ----------
+// Avec le pilote Virtual Display Driver, la diffusion peut aller sur un écran que personne ne regarde.
+// SceneCue le branche tant que « Diffusion » vaut « Écran virtuel » (à la résolution de l'écran de sortie,
+// dans un coin où la souris ne passe pas), et le débranche quand on change de réglage ou qu'on quitte.
+// Sans ce réglage, SceneCue n'y touche pas.
+const virtual = { output: null, error: null }; // sortie Windows de l'écran virtuel (vdisplay.list), dernière erreur
+const virtualInfo = () => ({ available: !!virtual.output, error: virtual.error });
+let virtualQueue = Promise.resolve();
+
+function syncVirtual(leaving = false) {
+  if (process.platform !== 'win32') return;
+  virtualQueue = virtualQueue.then(async () => {
+    const r = await vdisplay.list();
+    const o = virtual.output = r.ok ? r.outputs.find((x) => x.virtual) || null : null;
+    virtual.error = null;
+    let done = r;
+    if (o && store.mirror === 'virtual') {
+      const d = targetDisplay();
+      const w = Math.round(d.size.width * d.scaleFactor);
+      const h = Math.round(d.size.height * d.scaleFactor);
+      if (!o.attached || !o.placed || o.w !== w || o.h !== h) done = await vdisplay.attach(o.name, w, h);
+    } else if (o && o.attached && leaving) {
+      done = await vdisplay.detach(o.name);
+    }
+    if (!done.ok) virtual.error = done.error || `code ${done.code}`;
+    if (win && !win.isDestroyed()) win.webContents.send('virtual', virtualInfo());
+  });
+}
+
 // ---------- overlay (compositeur plein écran) ----------
 function sendOverlay(channel, payload) {
   if (overlay && !overlay.isDestroyed()) overlay.webContents.send(channel, payload);
 }
 
 function createOverlay() {
-  overlay = new BrowserWindow({
+  const mirror = mirrorDisplay();
+  overlayKey = outputKey();
+  const w = overlay = mirror ? new BrowserWindow({
+    ...mirror.bounds,
+    show: false,
+    frame: false,
+    backgroundColor: '#000000',
+    minimizable: false,
+    hasShadow: false,
+    title: L('SceneCue — diffusion', 'SceneCue — broadcast'),
+    icon: path.join(ASSETS, 'icon.png'),
+    webPreferences: { preload: PRELOAD, backgroundThrottling: false },
+  }) : new BrowserWindow({
     ...targetDisplay().bounds,
     show: false,
     frame: false,
@@ -277,23 +341,50 @@ function createOverlay() {
     title: 'SceneCue — overlay',
     webPreferences: { preload: PRELOAD, backgroundThrottling: false },
   });
-  overlay.setAlwaysOnTop(true, 'screen-saver');
-  overlay.setIgnoreMouseEvents(true);
-  overlay.loadURL(pageUrl('compositor.html', 'mode=overlay'));
-  overlay.webContents.on('did-finish-load', () => {
+  if (mirror) {
+    // toujours affichée, même hors antenne : le partage Discord ne s'interrompt pas
+    w.once('ready-to-show', () => {
+      if (w.isDestroyed()) return;
+      w.showInactive();
+      w.setFullScreen(true); // couvre aussi la barre des tâches de cet écran
+    });
+    w.on('close', (e) => { if (!quitting) e.preventDefault(); });
+  } else {
+    w.setAlwaysOnTop(true, 'screen-saver');
+    w.setIgnoreMouseEvents(true);
+  }
+  w.loadURL(outputUrl());
+  w.webContents.on('did-finish-load', () => {
     sendOverlay('modules', modules);
     sendOverlay('live', { live: !!live.scene, since: live.since });
     sendOverlay('scene', sceneById(live.scene));
     if (live.scene) showOverlay();
   });
-  overlay.on('closed', () => { overlay = null; });
+  w.on('closed', () => { if (overlay === w) overlay = null; });
 }
 
-const placeOverlay = () => { if (overlay) overlay.setBounds(targetDisplay().bounds); };
+const placeOverlay = () => { if (overlay && !isMirror()) overlay.setBounds(targetDisplay().bounds); };
+
+// après un changement d'écran ou de mode : recrée la fenêtre de sortie si besoin
+function applyOutput() {
+  const key = outputKey();
+  // pendant la diffusion, la fenêtre SceneCue n'apparaît dans aucune capture : ni dans la copie, ni dans Discord
+  if (win && !win.isDestroyed()) win.setContentProtection(key !== 'overlay');
+  if (overlay && overlayKey === key) { placeOverlay(); return; }
+  clearInterval(topTimer);
+  clearTimeout(hideTimer);
+  if (overlay) { const old = overlay; overlay = null; old.destroy(); }
+  createOverlay();
+}
 
 function showOverlay() {
   if (!overlay) return;
   clearTimeout(hideTimer);
+  if (isMirror()) {
+    if (!overlay.isVisible()) overlay.showInactive();
+    sendOverlay('enter');
+    return;
+  }
   placeOverlay();
   overlay.showInactive();
   overlay.setAlwaysOnTop(true, 'screen-saver');
@@ -310,7 +401,11 @@ function hideOverlay() {
   clearInterval(topTimer);
   sendOverlay('leave');
   clearTimeout(hideTimer);
-  hideTimer = setTimeout(() => { if (overlay && !live.scene) overlay.hide(); }, 480);
+  hideTimer = setTimeout(() => {
+    if (!overlay || live.scene) return;
+    // la fenêtre de diffusion reste affichée : on retire les calques une fois sortis
+    if (isMirror()) sendOverlay('scene', null); else overlay.hide();
+  }, 480);
 }
 
 function setLive(sceneId) {
@@ -346,6 +441,7 @@ function createWindow() {
     webPreferences: { preload: PRELOAD },
   });
   win.setMenuBarVisibility(false);
+  win.setContentProtection(isMirror());
   win.loadURL(pageUrl('index.html'));
   win.once('ready-to-show', () => win.show());
   win.on('close', (e) => {
@@ -423,6 +519,7 @@ ipcMain.handle('init', () => ({
   lang: lang(),
   store,
   displays: displaysInfo(),
+  virtual: virtualInfo(),
   live,
   hotkeys,
 }));
@@ -472,13 +569,24 @@ ipcMain.on('lang', (_e, value) => {
   saveStore();
   updateTray();
   if (win && !win.isDestroyed()) win.loadURL(pageUrl('index.html'));
-  if (overlay && !live.scene) overlay.loadURL(pageUrl('compositor.html', 'mode=overlay'));
+  if (overlay && !live.scene) overlay.loadURL(outputUrl());
 });
 
 ipcMain.on('display', (_e, id) => {
   store.display = id;
+  if (store.mirror === id) store.mirror = null; // la copie ne peut pas aller sur l'écran copié
   saveStore();
-  placeOverlay();
+  applyOutput();
+  if (store.mirror === 'virtual') syncVirtual(); // l'écran virtuel suit la résolution de l'écran de sortie
+});
+
+// écran de diffusion : id d'un écran, 'virtual' (l'écran virtuel), ou null (la scène se pose par-dessus l'écran)
+ipcMain.on('mirror', (_e, id) => {
+  const leaving = store.mirror === 'virtual';
+  store.mirror = typeof id === 'number' || id === 'virtual' ? id : null;
+  saveStore();
+  applyOutput(); // l'écran virtuel, lui, arrive un peu plus tard (display-added)
+  syncVirtual(leaving && store.mirror !== 'virtual');
 });
 
 ipcMain.handle('module-call', (_e, { module, method, args }) => {
@@ -541,16 +649,36 @@ if (!app.requestSingleInstanceLock()) {
       return net.fetch(pathToFileURL(file).toString());
     });
 
+    // La fenêtre de diffusion filme l'écran où passent les scènes (getDisplayMedia, sans sélecteur).
+    // Aucune autre page n'a le droit de capturer l'écran.
+    session.defaultSession.setDisplayMediaRequestHandler((req, cb) => {
+      const f = req.frame;
+      const mf = isMirror() && !overlay.isDestroyed() ? overlay.webContents.mainFrame : null;
+      if (!f || !mf || f.processId !== mf.processId || f.routingId !== mf.routingId) { cb({}); return; }
+      desktopCapturer.getSources({ types: ['screen'], thumbnailSize: { width: 0, height: 0 } }).then((sources) => {
+        const d = targetDisplay();
+        const src = sources.find((x) => x.display_id === String(d.id))
+          || sources[screen.getAllDisplays().findIndex((x) => x.id === d.id)];
+        cb(src ? { video: src } : {});
+      }, () => cb({}));
+    });
+
     modules = discoverModules();
     loadStore();
+    // réglage d'avant l'option « Écran virtuel » : la copie visait l'écran virtuel par son id
+    const old = screen.getAllDisplays().find((d) => d.id === store.mirror);
+    if (old && isVirtual(old)) store.mirror = 'virtual';
     loadBackends();
     createOverlay();
     createWindow();
     createTray();
     registerHotkeys();
+    syncVirtual();
 
     const onDisplays = () => {
-      placeOverlay();
+      applyOutput();
+      // pilote d'écran virtuel installé pendant que SceneCue tourne : l'option apparaît sans redémarrer
+      if (!virtual.output && screen.getAllDisplays().some(isVirtual)) syncVirtual();
       if (win) win.webContents.send('displays', displaysInfo());
     };
     screen.on('display-added', onDisplays);
@@ -560,6 +688,7 @@ if (!app.requestSingleInstanceLock()) {
 
   app.on('before-quit', () => { quitting = true; });
   app.on('will-quit', () => {
+    if (store && store.mirror === 'virtual' && virtual.output) vdisplay.detachSync(virtual.output.name);
     globalShortcut.unregisterAll();
     for (const b of backends.values()) { try { if (typeof b.dispose === 'function') b.dispose(); } catch (e) { console.error(e); } }
     if (store) saveStore(true);
