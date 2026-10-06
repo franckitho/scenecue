@@ -4,21 +4,21 @@
 const C = window.Cam;
 const _ = I18N.t; // traduction (voir i18n.js et en.js)
 I18N.apply();
-// Le bridge vient de Régie, qui charge ce module dans une scène.
+// Le bridge vient de SceneCue, qui charge ce module dans une scène.
 const api = window.bridge || hostBridge() || stubBridge();
 
 function hostBridge() {
   try {
-    return window.parent !== window && typeof window.parent.regieBridge === 'function'
-      ? window.parent.regieBridge(window)
+    return window.parent !== window && typeof window.parent.sceneCueBridge === 'function'
+      ? window.parent.sceneCueBridge(window)
       : null;
   } catch { return null; }
 }
 
-// Permet d'ouvrir index.html dans un navigateur classique (sans Régie) pour travailler l'interface.
+// Permet d'ouvrir index.html dans un navigateur classique (sans SceneCue) pour travailler l'interface.
 function stubBridge() {
   const status = {
-    running: false, error: _('Serveur indisponible hors de Régie'), port: 8443, httpPort: 8080, addresses: [], ip: '127.0.0.1',
+    running: false, error: _('Serveur indisponible hors de SceneCue'), port: 8443, httpPort: 8080, addresses: [], ip: '127.0.0.1',
     key: '0000', url: 'https://127.0.0.1:8443/?k=0000', phone: null, viewers: 0, facing: 'user', quality: '1080',
   };
   return {
@@ -440,7 +440,7 @@ function refreshWait() {
   } else if (srv && srv.error) {
     title = _('Le serveur ne démarre pas'); text = srv.error;
   } else if (srv && srv.phone && srv.phone.connected) {
-    title = _("Connexion à l'iPhone…"); text = _('Si rien ne vient, vérifie que Windows autorise Régie sur les réseaux privés.');
+    title = _("Connexion à l'iPhone…"); text = _('Si rien ne vient, vérifie que Windows autorise SceneCue sur les réseaux privés.');
   } else {
     title = _("En attente de l'iPhone"); text = _("Scanne le QR code ci-dessous avec l'appareil photo de l'iPhone.");
   }
@@ -481,7 +481,7 @@ function setupSections() {
   state = C.clone(C.merge(C.DEFAULT_STATE, init.state || {}));
   displays = init.displays || [];
 
-  // Dans Régie : les autres calques de la scène s'affichent sous et sur l'aperçu
+  // Dans SceneCue : les autres calques de la scène s'affichent sous et sur l'aperçu
   if (init.backdrop) {
     for (const [where, url] of [['below', init.backdrop.below], ['above', init.backdrop.above]]) {
       if (!url) continue;

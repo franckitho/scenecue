@@ -1,4 +1,4 @@
-// Vérification du module « Image / vidéo » : lance Régie avec un profil temporaire, fabrique des médias de test
+// Vérification du module « Image / vidéo » : lance SceneCue avec un profil temporaire, fabrique des médias de test
 // (vidéo enregistrée à la volée, PNG animé, image fixe), joue un scénario et enregistre captures + mesures.
 // L'overlay est rendu invisible (opacité 0) : rien ne s'affiche réellement à l'écran pendant le test.
 // Usage : npx electron scripts/snap-media.js <dossier-de-sortie>
@@ -10,6 +10,7 @@ const zlib = require('zlib');
 const out = path.resolve(process.argv[process.argv.length - 1]);
 fs.mkdirSync(out, { recursive: true });
 app.setPath('userData', path.join(out, 'userdata'));
+app.commandLine.appendSwitch('lang', 'fr-FR'); // le scénario vérifie les textes français (SceneCue est en anglais par défaut)
 setTimeout(() => { console.error('délai dépassé'); app.exit(1); }, 180000);
 process.on('unhandledRejection', (e) => {
   console.error('ÉCHEC DU SCÉNARIO :', e);
@@ -18,7 +19,7 @@ process.on('unhandledRejection', (e) => {
   app.exit(1);
 });
 
-require(process.env.REGIE_MAIN || '../src/main.js');
+require(process.env.SCENECUE_MAIN || '../src/main.js');
 
 const wait = (ms) => new Promise((r) => setTimeout(r, ms));
 const logs = [];
@@ -193,7 +194,7 @@ app.whenReady().then(async () => {
   check('son : « Écouter » dans l\'aperçu', await pjs(`player.src.el.muted === false`), await dbgP());
   await pjs(`document.querySelector('#listen').click()`);
 
-  // boomerang, mesuré sur la sortie (l'aperçu ralentit si la fenêtre Régie est recouverte)
+  // boomerang, mesuré sur la sortie (l'aperçu ralentit si la fenêtre SceneCue est recouverte)
   const sample = async (n) => {
     const s = [];
     for (let i = 0; i < n; i++) {
@@ -243,7 +244,7 @@ app.whenReady().then(async () => {
   // déplacer à la souris, redimensionner par le coin
   await pjs(`state.fit = 'free'; state.x = 0.5; state.y = 0.5; state.size = 0.4; state.rotate = 0; state.repeat = 0; state.gap = 0; sync(); commit();`);
   await wait(300);
-  // rectangle du média, en coordonnées de la fenêtre Régie
+  // rectangle du média, en coordonnées de la fenêtre SceneCue
   const boxRect = async () => {
     const o = await js(`(() => { const r = document.querySelector('#panel').getBoundingClientRect(); return { x: r.left, y: r.top }; })()`);
     const b = await pjs(`(() => { const r = player.box.getBoundingClientRect(); return { x: r.left, y: r.top, w: r.width, h: r.height }; })()`);
@@ -300,7 +301,7 @@ app.whenReady().then(async () => {
   check('suppression refusée pour un média utilisé', used.ok === false && used.used === 1, JSON.stringify(used));
   const free = await js(`host.removeMedia(${JSON.stringify(mv.id)})`);
   check('suppression d\'un média inutilisé', free.ok === true && !fs.existsSync(path.join(out, 'userdata', 'media', mv.file)), JSON.stringify(free));
-  await save(main, '12-regie');
+  await save(main, '12-scenecue');
 
   await js(`document.querySelector('#onair').click()`);
   await wait(800);

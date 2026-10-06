@@ -1,5 +1,5 @@
 'use strict';
-/* Régie — fenêtre principale : scènes, calques, édition des modules, mise à l'écran */
+/* SceneCue — fenêtre principale : scènes, calques, édition des modules, mise à l'écran */
 
 const _ = I18N.t; // traduction (voir i18n.js)
 const LANG = I18N.lang;
@@ -85,7 +85,7 @@ function saveStructure() {
 
 // ---------- flux vers les compositeurs intégrés (vignette, arrière-plans des éditeurs) ----------
 const feeds = new Set();
-window.regieFeed = {
+window.sceneCueFeed = {
   attach(c) { feeds.add(c); pushTo(c); },
   detach(c) { feeds.delete(c); },
   call: (module, method, args) => viaHost(host.callModule(module, method, args)),
@@ -137,7 +137,7 @@ function pushLayerState(layerId, state) {
 // ---------- éditeur du calque (page « panel » du module) ----------
 const panelFrame = $('#panel');
 
-window.regieBridge = (win) => (panel && panelFrame.contentWindow === win ? panel.bridge : null);
+window.sceneCueBridge = (win) => (panel && panelFrame.contentWindow === win ? panel.bridge : null);
 
 function makePanelBridge(sceneId, layerId, moduleId) {
   const listeners = {};
@@ -259,7 +259,7 @@ function showEmpty(scene, title) {
   cat.replaceChildren();
   if (!scene) return;
   if (!modules.length) {
-    cat.append(el('p', 'empty-text', _('Aucun module trouvé. Un module est un dossier avec un module.json, placé à côté de Régie.')));
+    cat.append(el('p', 'empty-text', _('Aucun module trouvé. Un module est un dossier avec un module.json, placé à côté de SceneCue.')));
     return;
   }
   for (const m of modules) cat.append(modCard(m, () => addLayer(m.id)));
@@ -604,12 +604,12 @@ document.addEventListener('pointerdown', (e) => { if (!menu.hidden && !menu.cont
 document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeMenu(); });
 $('#add-scene').addEventListener('click', addScene);
 
-// langue de l'interface : Régie recharge sa fenêtre dans la langue choisie
+// langue de l'interface : SceneCue recharge sa fenêtre dans la langue choisie
 for (const b of $('#lang').children) {
   b.classList.toggle('on', b.dataset.v === LANG);
   b.addEventListener('click', () => { if (b.dataset.v !== LANG) host.setLang(b.dataset.v); });
 }
-// un fichier lâché hors de l'éditeur d'un module ne doit pas remplacer la page de Régie
+// un fichier lâché hors de l'éditeur d'un module ne doit pas remplacer la page de SceneCue
 for (const t of ['dragover', 'drop']) document.addEventListener(t, (e) => e.preventDefault());
 
 // ---------- démarrage ----------

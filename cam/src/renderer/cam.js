@@ -313,7 +313,7 @@
       const seq = this.seq;
       this.error = null;
       if (this.state.source === 'phone') {
-        if (!this.bridge || !this.bridge.call) { this.error = _('Régie indisponible'); this.info(); return; }
+        if (!this.bridge || !this.bridge.call) { this.error = _('SceneCue indisponible'); this.info(); return; }
         await this.whenOutputKnown();
         if (seq !== this.seq) return;
         this.link = new PhoneLink(this.bridge, this.output ? 'full' : 'preview', (stream) => this.attach(stream), () => { this.setLive(); this.info(); });

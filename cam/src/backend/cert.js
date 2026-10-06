@@ -34,7 +34,7 @@ const ECDSA_SHA256 = '1.2.840.10045.4.3.2';
 const VALID_DAYS = 800;
 
 // → { key, cert } au format PEM, valable pour les noms et adresses IPv4 donnés
-function makeCert({ name = 'Regie camera', dns = ['localhost'], ips = ['127.0.0.1'] } = {}) {
+function makeCert({ name = 'SceneCue camera', dns = ['localhost'], ips = ['127.0.0.1'] } = {}) {
   const { privateKey, publicKey } = crypto.generateKeyPairSync('ec', { namedCurve: 'P-256' });
   const serial = crypto.randomBytes(16);
   serial[0] &= 0x7f;

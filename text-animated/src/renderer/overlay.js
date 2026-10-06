@@ -1,12 +1,12 @@
 // Calque affiché à l'écran : plein écran, transparent. En solo il vit dans sa propre fenêtre,
-// dans Régie il est chargé dans le compositeur de la scène.
+// dans SceneCue il est chargé dans le compositeur de la scène.
 const api = window.bridge || hostBridge();
 const r = new Pancarte.Renderer(document.getElementById('host'));
 
 function hostBridge() {
   try {
-    return window.parent !== window && typeof window.parent.regieBridge === 'function'
-      ? window.parent.regieBridge(window)
+    return window.parent !== window && typeof window.parent.sceneCueBridge === 'function'
+      ? window.parent.sceneCueBridge(window)
       : null;
   } catch { return null; }
 }

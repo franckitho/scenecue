@@ -4,11 +4,13 @@
  *  - I18N.apply(racine) traduit le HTML statique : textes, attributs title / placeholder / aria-label / alt /
  *    data-label, libellés de data-options et data-titles. Un élément [data-i18n] est traduit d'un bloc (HTML compris).
  *  - I18N.t('Texte français', { variable }) pour les textes construits en JS ({variable} dans les deux langues).
- * Langue : ?lang=fr|en dans l'adresse de la page (donnée par Régie), sinon celle du système. */
+ * Langue : ?lang=fr|en dans l'adresse de la page (donnée par SceneCue), sinon data-lang-default sur <html>
+ * (le site : anglais), sinon celle du système. */
 (function () {
   'use strict';
   const param = new URLSearchParams(location.search).get('lang');
-  const lang = param === 'fr' || param === 'en' ? param : /^fr\b/i.test(navigator.language || '') ? 'fr' : 'en';
+  const lang = param === 'fr' || param === 'en' ? param
+    : document.documentElement.dataset.langDefault || (/^fr\b/i.test(navigator.language || '') ? 'fr' : 'en');
   const dict = {};
   const missing = new Set(); // textes sans traduction rencontrés (repérés par scripts/snap-i18n.js)
   const norm = (s) => String(s).replace(/\s+/g, ' ').trim();

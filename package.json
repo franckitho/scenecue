@@ -1,8 +1,8 @@
 {
-  "name": "regie",
-  "productName": "Regie",
+  "name": "scenecue",
+  "productName": "SceneCue",
   "version": "1.0.0",
-  "description": "Régie de scènes pour stream : compose des scènes à partir de modules et affiche-les par-dessus ton écran.",
+  "description": "SceneCue, la régie de scènes pour stream : compose des scènes à partir de modules et affiche-les par-dessus ton écran.",
   "main": "src/main.js",
   "private": true,
   "scripts": {

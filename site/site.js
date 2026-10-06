@@ -1,6 +1,6 @@
-/* Site de Régie — langue, liens vers le dépôt et bouton de téléchargement de la dernière version.
+/* Site de SceneCue — langue, liens vers le dépôt et bouton de téléchargement de la dernière version.
  * Le dépôt vient de data-repo (écrit par scripts/build-site.js), sinon de l'adresse compte.github.io/dépôt.
- * Le zip garde toujours le même nom : releases/latest/download/Regie-win-x64.zip pointe sur la dernière version. */
+ * Le zip garde toujours le même nom : releases/latest/download/SceneCue-win-x64.zip pointe sur la dernière version. */
 (function () {
   'use strict';
 
@@ -9,7 +9,7 @@
   for (const a of document.querySelectorAll('[data-lang]')) a.classList.toggle('on', a.dataset.lang === I18N.lang);
   if (I18N.lang === 'en') for (const img of document.querySelectorAll('img[data-src-en]')) img.src = img.dataset.srcEn; // captures de l'interface en anglais
 
-  const ASSET = 'Regie-win-x64.zip';
+  const ASSET = 'SceneCue-win-x64.zip';
   const PATHS = { repo: '', releases: '/releases', issues: '/issues', license: '/blob/main/LICENSE', modules: '/blob/main/MODULES.md' };
 
   function detectRepo() {

@@ -1,14 +1,14 @@
 <!doctype html>
-<html lang="fr">
+<html lang="fr" data-lang-default="en">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Régie — scene control for Discord streams</title>
+  <title>SceneCue — scene control for Discord streams</title>
   <meta name="description" content="Animated text, images, videos and camera (even your iPhone's) on top of your screen, for streaming on Discord. Free, open source, for Windows.">
   <meta name="theme-color" content="#FF4D1F">
   <meta property="og:type" content="website">
-  <meta property="og:site_name" content="Régie">
-  <meta property="og:title" content="Régie — scene control for Discord streams">
+  <meta property="og:site_name" content="SceneCue">
+  <meta property="og:title" content="SceneCue — scene control for Discord streams">
   <meta property="og:description" content="Animated text, images, videos and camera (even your iPhone's) on top of your screen. Free and open source.">
   <meta property="og:image" content="__BASE__images/texte-anime-en.png">
   <meta property="og:url" content="__BASE__">
@@ -21,7 +21,7 @@
 
 <header class="top">
   <div class="wrap top-in">
-    <a class="brand" href="#" data-no-i18n><img src="icon.png" alt="" width="26" height="26"><span>Régie</span></a>
+    <a class="brand" href="#" data-no-i18n><img src="icon.png" alt="" width="26" height="26"><span>SceneCue</span></a>
     <nav class="nav">
       <a href="#comment">Comment ça marche</a>
       <a href="#modules">Modules</a>
@@ -54,7 +54,7 @@
       <p class="note" id="dl-note">Gratuit, open source (licence MIT), sans compte ni publicité.</p>
     </div>
     <figure class="shot">
-      <img src="images/texte-anime.png" data-src-en="images/texte-anime-en.png" alt="Régie : la scène « Je reviens vite » en texte animé, avec la galerie de styles" width="1480" height="900">
+      <img src="images/texte-anime.png" data-src-en="images/texte-anime-en.png" alt="SceneCue : la scène « Je reviens vite » en texte animé, avec la galerie de styles" width="1480" height="900">
     </figure>
   </section>
 
@@ -107,8 +107,8 @@
         <h2 class="label">La caméra de l'iPhone, en quatre étapes</h2>
         <ol class="steps steps--compact">
           <li><b>Même Wi-Fi</b><span>L'iPhone et le PC sur le même réseau.</span></li>
-          <li><b>Scanne le QR code</b><span>Affiché par Régie, avec l'appareil photo de l'iPhone.</span></li>
-          <li><b>Accepte l'avertissement</b><span data-i18n>« Connexion non privée » : <i>Afficher les détails › visiter ce site web</i>. Régie crée son propre certificat.</span></li>
+          <li><b>Scanne le QR code</b><span>Affiché par SceneCue, avec l'appareil photo de l'iPhone.</span></li>
+          <li><b>Accepte l'avertissement</b><span data-i18n>« Connexion non privée » : <i>Afficher les détails › visiter ce site web</i>. SceneCue crée son propre certificat.</span></li>
           <li><b>Démarrer</b><span>Autorise la caméra. Garde Safari ouvert, écran allumé.</span></li>
         </ol>
       </div>
@@ -130,19 +130,19 @@
     <h2 class="label">Questions</h2>
     <details>
       <summary>Windows affiche « Windows a protégé votre ordinateur »</summary>
-      <p data-i18n>L'exécutable n'est pas signé (un certificat de signature coûte cher). Clique sur <i>Informations complémentaires</i>, puis <i>Exécuter quand même</i>. Tu peux aussi construire Régie toi-même à partir du code source.</p>
+      <p data-i18n>L'exécutable n'est pas signé (un certificat de signature coûte cher). Clique sur <i>Informations complémentaires</i>, puis <i>Exécuter quand même</i>. Tu peux aussi construire SceneCue toi-même à partir du code source.</p>
     </details>
     <details>
       <summary>Faut-il installer quelque chose ?</summary>
-      <p data-i18n>Non : décompresse le zip où tu veux et lance <code>Regie.exe</code>. Tes réglages sont dans <code>%APPDATA%\Regie</code> ; supprime ce dossier pour repartir de zéro.</p>
+      <p data-i18n>Non : décompresse le zip où tu veux et lance <code>SceneCue.exe</code>. Tes réglages sont dans <code>%APPDATA%\SceneCue</code> ; supprime ce dossier pour repartir de zéro.</p>
     </details>
     <details>
       <summary>L'interface est-elle en anglais ?</summary>
-      <p data-i18n>Oui : Régie suit la langue de Windows (français ou anglais), et le sélecteur <b>FR | EN</b> en haut de la fenêtre change la langue à tout moment.</p>
+      <p data-i18n>Oui : SceneCue démarre en anglais, et le sélecteur <b>FR | EN</b> en haut de la fenêtre passe l'interface en français à tout moment.</p>
     </details>
     <details>
       <summary>Mes potes ne voient pas la scène</summary>
-      <p data-i18n>Dans Discord, partage ton <b>écran entier</b>, pas une fenêtre, et vérifie que l'écran choisi est celui réglé dans <i>Sortie</i>, en bas à gauche de Régie.</p>
+      <p data-i18n>Dans Discord, partage ton <b>écran entier</b>, pas une fenêtre, et vérifie que l'écran choisi est celui réglé dans <i>Sortie</i>, en bas à gauche de SceneCue.</p>
     </details>
     <details>
       <summary>Un jeu passe devant la scène</summary>
@@ -150,7 +150,7 @@
     </details>
     <details>
       <summary>Ça marche avec OBS, Twitch, YouTube ?</summary>
-      <p>Régie est pensée pour le partage d'écran de Discord, mais la scène est une vraie fenêtre par-dessus ton bureau : tout logiciel qui capture l'écran entier la voit, OBS compris.</p>
+      <p>SceneCue est pensé pour le partage d'écran de Discord, mais la scène est une vraie fenêtre par-dessus ton bureau : tout logiciel qui capture l'écran entier la voit, OBS compris.</p>
     </details>
     <details>
       <summary>Et sur Mac ou Linux ?</summary>
@@ -169,9 +169,9 @@
 
 <footer class="foot">
   <div class="wrap foot-in">
-    <span data-i18n>Régie · licence <a data-link="license" href="#">MIT</a></span>
+    <span data-i18n>SceneCue · licence <a data-link="license" href="#">MIT</a></span>
     <span><a data-link="repo" href="#">Code source</a> · <a data-link="releases" href="#">Toutes les versions</a> · <a data-link="issues" href="#">Signaler un problème</a></span>
-    <span class="muted">Régie n'est pas affiliée à Discord.</span>
+    <span class="muted">SceneCue n'est pas affilié à Discord.</span>
   </div>
 </footer>
 

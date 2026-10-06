@@ -1,12 +1,12 @@
-// Calque affiché à l'écran, chargé par le compositeur de Régie : plein écran, transparent.
+// Calque affiché à l'écran, chargé par le compositeur de SceneCue : plein écran, transparent.
 // Le son ne sort que de la vraie sortie (overlay), jamais des aperçus.
 const api = hostBridge();
 const player = new Media.Player(document.getElementById('host'));
 
 function hostBridge() {
   try {
-    return window.parent !== window && typeof window.parent.regieBridge === 'function'
-      ? window.parent.regieBridge(window)
+    return window.parent !== window && typeof window.parent.sceneCueBridge === 'function'
+      ? window.parent.sceneCueBridge(window)
       : null;
   } catch { return null; }
 }

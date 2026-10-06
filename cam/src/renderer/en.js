@@ -14,7 +14,7 @@ I18N.add({
   "En attente de l'iPhone": 'Waiting for the iPhone',
   "Scanne le QR code ci-dessous avec l'appareil photo de l'iPhone.": "Scan the QR code below with the iPhone's camera.",
   "Connexion à l'iPhone…": 'Connecting to the iPhone…',
-  'Si rien ne vient, vérifie que Windows autorise Régie sur les réseaux privés.': 'If nothing shows up, check that Windows allows Régie on private networks.',
+  'Si rien ne vient, vérifie que Windows autorise SceneCue sur les réseaux privés.': 'If nothing shows up, check that Windows allows SceneCue on private networks.',
   'Le serveur ne démarre pas': "The server won't start",
   'Caméra indisponible': 'Camera unavailable',
   'Ouverture de la caméra…': 'Opening the camera…',
@@ -60,8 +60,8 @@ I18N.add({
   'Serveur : {error}': 'Server: {error}',
   "Adresse http:// indisponible ({error}). L'adresse https:// fonctionne.": 'http:// address unavailable ({error}). The https:// address works.',
   "Aucune carte Wi-Fi ou Ethernet trouvée : branche le PC au même réseau que l'iPhone.": 'No Wi-Fi or Ethernet adapter found: connect the PC to the same network as the iPhone.',
-  'Serveur indisponible hors de Régie': 'Server unavailable outside Régie',
-  'Régie indisponible': 'Régie unavailable',
+  'Serveur indisponible hors de SceneCue': 'Server unavailable outside SceneCue',
+  'SceneCue indisponible': 'SceneCue unavailable',
 
   // erreurs de la caméra du PC
   'Caméra déjà utilisée par une autre application (Discord, OBS, Teams…). Ferme-la puis clique « Réessayer ».': 'Camera already used by another application (Discord, OBS, Teams…). Close it, then click “Retry”.',

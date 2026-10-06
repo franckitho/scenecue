@@ -1,4 +1,4 @@
-// Construit dist/Regie-win32-x64/Regie.exe avec tous les modules trouvés.
+// Construit dist/SceneCue-win32-x64/SceneCue.exe avec tous les modules trouvés.
 // De chaque module, on n'embarque que son code et les node_modules listés dans "include" (module.json) :
 // ni son Electron, ni son propre dist.
 const path = require('path');
@@ -43,8 +43,8 @@ function ignore(p) {
   console.log(`Modules embarqués : ${[...modules.keys()].join(', ') || 'aucun'}`);
   const out = await packager({
     dir: ROOT,
-    name: 'Regie',
-    executableName: 'Regie',
+    name: 'SceneCue',
+    executableName: 'SceneCue',
     platform: 'win32',
     arch: 'x64',
     out: path.join(ROOT, 'dist'),
@@ -52,8 +52,8 @@ function ignore(p) {
     asar: true,
     prune: true,
     icon: path.join(ROOT, 'assets', 'icon.ico'),
-    appCopyright: 'Régie',
-    win32metadata: { ProductName: 'Régie', FileDescription: 'Régie' },
+    appCopyright: 'SceneCue',
+    win32metadata: { ProductName: 'SceneCue', FileDescription: 'SceneCue' },
     ignore,
   });
   console.log('Écrit dans', out.join(', '));

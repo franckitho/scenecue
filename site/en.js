@@ -16,7 +16,7 @@ I18N.add({
   'Windows 10 et 11': 'Windows 10 and 11',
   'Code source': 'Source code',
   'Gratuit, open source (licence MIT), sans compte ni publicité.': 'Free, open source (MIT license), no account, no ads.',
-  'Régie : la scène « Je reviens vite » en texte animé, avec la galerie de styles': 'Régie: the “Be right back” scene in animated text, with the style gallery',
+  'SceneCue : la scène « Je reviens vite » en texte animé, avec la galerie de styles': 'SceneCue: the “Be right back” scene in animated text, with the style gallery',
 
   // comment ça marche
   'Prépare tes scènes': 'Prepare your scenes',
@@ -53,9 +53,9 @@ I18N.add({
   'Même Wi-Fi': 'Same Wi-Fi',
   "L'iPhone et le PC sur le même réseau.": 'The iPhone and the PC on the same network.',
   'Scanne le QR code': 'Scan the QR code',
-  "Affiché par Régie, avec l'appareil photo de l'iPhone.": "Shown by Régie, with the iPhone's Camera app.",
+  "Affiché par SceneCue, avec l'appareil photo de l'iPhone.": "Shown by SceneCue, with the iPhone's Camera app.",
   "Accepte l'avertissement": 'Accept the warning',
-  '« Connexion non privée » : <i>Afficher les détails › visiter ce site web</i>. Régie crée son propre certificat.': '“Connection not private”: <i>Show Details › visit this website</i>. Régie creates its own certificate.',
+  '« Connexion non privée » : <i>Afficher les détails › visiter ce site web</i>. SceneCue crée son propre certificat.': '“Connection not private”: <i>Show Details › visit this website</i>. SceneCue creates its own certificate.',
   'Démarrer': 'Start',
   'Autorise la caméra. Garde Safari ouvert, écran allumé.': 'Allow the camera. Keep Safari open and the screen on.',
   'Et ta vie privée ?': 'What about your privacy?',
@@ -73,26 +73,26 @@ I18N.add({
 
   // questions
   'Windows affiche « Windows a protégé votre ordinateur »': 'Windows shows “Windows protected your PC”',
-  "L'exécutable n'est pas signé (un certificat de signature coûte cher). Clique sur <i>Informations complémentaires</i>, puis <i>Exécuter quand même</i>. Tu peux aussi construire Régie toi-même à partir du code source.": "The executable isn't signed (a code signing certificate is expensive). Click <i>More info</i>, then <i>Run anyway</i>. You can also build Régie yourself from the source code.",
+  "L'exécutable n'est pas signé (un certificat de signature coûte cher). Clique sur <i>Informations complémentaires</i>, puis <i>Exécuter quand même</i>. Tu peux aussi construire SceneCue toi-même à partir du code source.": "The executable isn't signed (a code signing certificate is expensive). Click <i>More info</i>, then <i>Run anyway</i>. You can also build SceneCue yourself from the source code.",
   'Faut-il installer quelque chose ?': 'Do I need to install anything?',
-  'Non : décompresse le zip où tu veux et lance <code>Regie.exe</code>. Tes réglages sont dans <code>%APPDATA%\\Regie</code> ; supprime ce dossier pour repartir de zéro.': 'No: unzip it anywhere and run <code>Regie.exe</code>. Your settings live in <code>%APPDATA%\\Regie</code>; delete that folder to start from scratch.',
+  'Non : décompresse le zip où tu veux et lance <code>SceneCue.exe</code>. Tes réglages sont dans <code>%APPDATA%\\SceneCue</code> ; supprime ce dossier pour repartir de zéro.': 'No: unzip it anywhere and run <code>SceneCue.exe</code>. Your settings live in <code>%APPDATA%\\SceneCue</code>; delete that folder to start from scratch.',
   "L'interface est-elle en anglais ?": 'Is the interface in English?',
-  'Oui : Régie suit la langue de Windows (français ou anglais), et le sélecteur <b>FR | EN</b> en haut de la fenêtre change la langue à tout moment.': 'Yes: Régie follows the Windows language (French or English), and the <b>FR | EN</b> switch at the top of the window changes it at any time.',
+  "Oui : SceneCue démarre en anglais, et le sélecteur <b>FR | EN</b> en haut de la fenêtre passe l'interface en français à tout moment.": 'Yes: SceneCue starts in English, and the <b>FR | EN</b> switch at the top of the window turns it to French at any time.',
   'Mes potes ne voient pas la scène': "My friends can't see the scene",
-  "Dans Discord, partage ton <b>écran entier</b>, pas une fenêtre, et vérifie que l'écran choisi est celui réglé dans <i>Sortie</i>, en bas à gauche de Régie.": 'In Discord, share your <b>entire screen</b>, not a window, and check that it is the screen set in <i>Output</i>, at the bottom left of Régie.',
+  "Dans Discord, partage ton <b>écran entier</b>, pas une fenêtre, et vérifie que l'écran choisi est celui réglé dans <i>Sortie</i>, en bas à gauche de SceneCue.": 'In Discord, share your <b>entire screen</b>, not a window, and check that it is the screen set in <i>Output</i>, at the bottom left of SceneCue.',
   'Un jeu passe devant la scène': 'A game covers the scene',
   'Les jeux en plein écran exclusif passent devant tout. Mets le jeu en mode <b>fenêtré sans bordure</b>.': 'Games in exclusive fullscreen cover everything. Switch the game to <b>borderless windowed</b> mode.',
   'Ça marche avec OBS, Twitch, YouTube ?': 'Does it work with OBS, Twitch, YouTube?',
-  "Régie est pensée pour le partage d'écran de Discord, mais la scène est une vraie fenêtre par-dessus ton bureau : tout logiciel qui capture l'écran entier la voit, OBS compris.": "Régie is designed for Discord's screen share, but the scene is a real window on top of your desktop: any software that captures the entire screen sees it, OBS included.",
+  "SceneCue est pensé pour le partage d'écran de Discord, mais la scène est une vraie fenêtre par-dessus ton bureau : tout logiciel qui capture l'écran entier la voit, OBS compris.": "SceneCue is designed for Discord's screen share, but the scene is a real window on top of your desktop: any software that captures the entire screen sees it, OBS included.",
   'Et sur Mac ou Linux ?': 'What about Mac or Linux?',
   'Windows uniquement pour l\'instant. Les contributions sont bienvenues !': 'Windows only for now. Contributions are welcome!',
 
   // fin de page
   'Prêt pour ton prochain BRB ?': 'Ready for your next BRB?',
-  'Régie · licence <a data-link="license" href="#">MIT</a>': 'Régie · <a data-link="license" href="#">MIT</a> license',
+  'SceneCue · licence <a data-link="license" href="#">MIT</a>': 'SceneCue · <a data-link="license" href="#">MIT</a> license',
   'Toutes les versions': 'All releases',
   'Signaler un problème': 'Report an issue',
-  "Régie n'est pas affiliée à Discord.": 'Régie is not affiliated with Discord.',
+  "SceneCue n'est pas affilié à Discord.": 'SceneCue is not affiliated with Discord.',
 
   // site.js
   "Aperçu local : les liens s'activent une fois le site publié sur GitHub Pages.": 'Local preview: links turn on once the site is published on GitHub Pages.',

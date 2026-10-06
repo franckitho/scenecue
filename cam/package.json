@@ -1,7 +1,7 @@
 {
-  "name": "regie-camera",
+  "name": "scenecue-camera",
   "private": true,
-  "description": "Module Caméra de Régie : webcam, carte d'acquisition, ou caméra d'iPhone via le réseau local.",
+  "description": "Module Caméra de SceneCue : webcam, carte d'acquisition, ou caméra d'iPhone via le réseau local.",
   "dependencies": {
     "qrcode": "^1.5.4"
   },

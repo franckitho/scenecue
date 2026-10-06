@@ -1,13 +1,13 @@
-// Page du téléphone en anglais : texte français (index.html, phone.js, messages de Régie) → anglais.
+// Page du téléphone en anglais : texte français (index.html, phone.js, messages de SceneCue) → anglais.
 I18N.add({
-  'Régie · Caméra': 'Régie · Camera',
+  'SceneCue · Caméra': 'SceneCue · Camera',
   'Prêt': 'Ready',
   'Connexion…': 'Connecting…',
   "À l'écran": 'On screen',
-  'Aperçu dans Régie': 'Preview in Régie',
-  'En attente de Régie': 'Waiting for Régie',
+  'Aperçu dans SceneCue': 'Preview in SceneCue',
+  'En attente de SceneCue': 'Waiting for SceneCue',
   "La caméra s'affichera ici": 'The camera will show up here',
-  'Code affiché dans Régie': 'Code shown in Régie',
+  'Code affiché dans SceneCue': 'Code shown in SceneCue',
   'Démarrer la caméra': 'Start the camera',
   'Arrêter': 'Stop',
   'Avant': 'Front',
@@ -19,11 +19,11 @@ I18N.add({
   'Aucune caméra trouvée.': 'No camera found.',
   'Un autre appareil a pris le relais. Touche « Démarrer » pour reprendre la main.': 'Another device took over. Tap “Start” to take back control.',
   "La caméra s'est arrêtée (appel, autre app…). Reviens sur cette page pour la relancer.": 'The camera stopped (call, another app…). Come back to this page to restart it.',
-  'Entre le code affiché dans Régie, ou scanne son QR code.': 'Enter the code shown in Régie, or scan its QR code.',
-  "Safari bloque la caméra sur cette page : ouvre l'adresse en https:// (scanne le QR code affiché dans Régie).": 'Safari blocks the camera on this page: open the https:// address (scan the QR code shown in Régie).',
-  'Régie ne répond pas ({error}). Vérifie que Régie est ouverte et que le téléphone est sur le même Wi-Fi.': "Régie doesn't respond ({error}). Check that Régie is open and that the phone is on the same Wi-Fi.",
-  'Régie a répondu {status}': 'Régie answered {status}',
-  // messages envoyés par le serveur de Régie
-  'Code incorrect : scanne le QR code affiché dans Régie.': 'Wrong code: scan the QR code shown in Régie.',
+  'Entre le code affiché dans SceneCue, ou scanne son QR code.': 'Enter the code shown in SceneCue, or scan its QR code.',
+  "Safari bloque la caméra sur cette page : ouvre l'adresse en https:// (scanne le QR code affiché dans SceneCue).": 'Safari blocks the camera on this page: open the https:// address (scan the QR code shown in SceneCue).',
+  'SceneCue ne répond pas ({error}). Vérifie que SceneCue est ouvert et que le téléphone est sur le même Wi-Fi.': "SceneCue doesn't respond ({error}). Check that SceneCue is open and that the phone is on the same Wi-Fi.",
+  'SceneCue a répondu {status}': 'SceneCue answered {status}',
+  // messages envoyés par le serveur de SceneCue
+  'Code incorrect : scanne le QR code affiché dans SceneCue.': 'Wrong code: scan the QR code shown in SceneCue.',
   'session terminée': 'session ended',
 });

@@ -1,4 +1,4 @@
-/* Site de Régie — mêmes fondations visuelles que l'application (polices copiées par scripts/build-site.js) */
+/* Site de SceneCue — mêmes fondations visuelles que l'application (polices copiées par scripts/build-site.js) */
 
 @font-face { font-family: 'Archivo'; font-weight: 400; font-display: swap; src: url('fonts/archivo-latin-400-normal.woff2') format('woff2'); }
 @font-face { font-family: 'Archivo'; font-weight: 500; font-display: swap; src: url('fonts/archivo-latin-500-normal.woff2') format('woff2'); }

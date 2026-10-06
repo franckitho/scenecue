@@ -1,6 +1,6 @@
-// Interface de Régie en anglais : texte français (tel qu'écrit dans index.html et regie.js) → anglais.
+// Interface de SceneCue en anglais : texte français (tel qu'écrit dans index.html et scenecue.js) → anglais.
 I18N.add({
-  'Régie': 'Régie',
+  'SceneCue': 'SceneCue',
   'Hors antenne': 'Off air',
   "Langue de l'interface": 'Interface language',
   'Aperçu': 'Preview',
@@ -39,5 +39,5 @@ I18N.add({
   "« {name} » n'a encore aucun calque": '“{name}” has no layers yet',
   'Crée une scène pour commencer': 'Create a scene to get started',
   'Aucun module trouvé.': 'No module found.',
-  'Aucun module trouvé. Un module est un dossier avec un module.json, placé à côté de Régie.': 'No module found. A module is a folder with a module.json, placed next to Régie.',
+  'Aucun module trouvé. Un module est un dossier avec un module.json, placé à côté de SceneCue.': 'No module found. A module is a folder with a module.json, placed next to SceneCue.',
 });

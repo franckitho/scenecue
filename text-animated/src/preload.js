@@ -1,6 +1,6 @@
 const { contextBridge, ipcRenderer } = require('electron');
 
-// Même API que celle fournie par Régie : le module fonctionne à l'identique en solo ou dans une scène.
+// Même API que celle fournie par SceneCue : le module fonctionne à l'identique en solo ou dans une scène.
 const CHANNELS = ['state', 'live', 'displays', 'enter', 'leave', 'show'];
 
 contextBridge.exposeInMainWorld('bridge', {

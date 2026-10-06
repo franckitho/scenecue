@@ -1,6 +1,6 @@
 const { contextBridge, ipcRenderer, webUtils } = require('electron');
 
-// Exposé à la fenêtre Régie et à l'overlay (pas aux iframes des modules : eux passent par regieBridge).
+// Exposé à la fenêtre SceneCue et à l'overlay (pas aux iframes des modules : eux passent par sceneCueBridge).
 const CHANNELS = ['live', 'displays', 'modules', 'scene', 'layer-state', 'enter', 'leave', 'module-event'];
 
 contextBridge.exposeInMainWorld('host', {

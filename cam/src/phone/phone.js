@@ -1,7 +1,7 @@
 'use strict';
-/* Régie · Caméra — page ouverte sur le téléphone.
- * Filme et envoie la vidéo (WebRTC) à chaque écran de Régie qui la regarde : la sortie à l'écran
- * en pleine qualité, les aperçus de l'éditeur en petite image. Le serveur de Régie ne sert qu'à se trouver. */
+/* SceneCue · Caméra — page ouverte sur le téléphone.
+ * Filme et envoie la vidéo (WebRTC) à chaque écran de SceneCue qui la regarde : la sortie à l'écran
+ * en pleine qualité, les aperçus de l'éditeur en petite image. Le serveur de SceneCue ne sert qu'à se trouver. */
 (function () {
   const $ = (s) => document.querySelector(s);
   const _ = I18N.t; // traduction (voir i18n.js et en.js), dans la langue du téléphone
@@ -15,7 +15,7 @@
   };
 
   let key = new URLSearchParams(location.search).get('k') || '';
-  try { if (!key) key = localStorage.getItem('regie-key') || ''; } catch { /* navigation privée */ }
+  try { if (!key) key = localStorage.getItem('scenecue-key') || ''; } catch { /* navigation privée */ }
   let id = null;
   let es = null;
   let stream = null;
@@ -27,7 +27,7 @@
   let quality = '1080';
   let wake = null;
   let reportTimer = 0;
-  const pcs = new Map(); // écran de Régie -> { pc, sender, quality, active, timer }
+  const pcs = new Map(); // écran de SceneCue -> { pc, sender, quality, active, timer }
 
   // ---------- interface ----------
   function message(text, info = false) {
@@ -45,8 +45,8 @@
     let cls = '';
     if (running && (!es || es.readyState !== EventSource.OPEN)) { text = _('Connexion…'); cls = 'wait'; }
     else if (running && live.some((p) => p.quality === 'full' && p.active)) { text = _("À l'écran"); cls = 'on'; }
-    else if (running && live.length) { text = _('Aperçu dans Régie'); cls = 'wait'; }
-    else if (running) { text = _('En attente de Régie'); cls = 'wait'; }
+    else if (running && live.length) { text = _('Aperçu dans SceneCue'); cls = 'wait'; }
+    else if (running) { text = _('En attente de SceneCue'); cls = 'wait'; }
     pill.className = `pill ${cls}`;
     $('#pill-text').textContent = text;
     go.textContent = _(running ? 'Arrêter' : 'Démarrer la caméra');
@@ -68,12 +68,12 @@
     return (e && e.message) || String(e);
   }
 
-  // ---------- serveur de Régie ----------
+  // ---------- serveur de SceneCue ----------
   async function api(path, body = {}) {
     const r = await fetch(path, { method: 'POST', cache: 'no-store', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id, ...body }) });
     const data = await r.json().catch(() => ({}));
     if (!r.ok) {
-      const e = new Error(data.error ? _(data.error) : _('Régie a répondu {status}', { status: r.status }));
+      const e = new Error(data.error ? _(data.error) : _('SceneCue a répondu {status}', { status: r.status }));
       e.status = r.status;
       throw e;
     }
@@ -102,7 +102,7 @@
   async function hello() {
     const r = await api('/api/hello', { key, info: info() });
     id = r.id;
-    try { localStorage.setItem('regie-key', key); } catch { /* ignore */ }
+    try { localStorage.setItem('scenecue-key', key); } catch { /* ignore */ }
     return r;
   }
 
@@ -117,7 +117,7 @@
     };
     es.onerror = () => {
       refresh();
-      // session expirée côté Régie (redémarrage, longue coupure) : on se présente à nouveau
+      // session expirée côté SceneCue (redémarrage, longue coupure) : on se présente à nouveau
       if (es && es.readyState === EventSource.CLOSED && running) { es = null; setTimeout(reconnect, 1500); }
     };
   }
@@ -210,7 +210,7 @@
     } catch { /* pas de verrou d'écran : l'utilisateur doit désactiver le verrouillage auto */ }
   }
 
-  // ---------- envoi vers Régie (WebRTC) ----------
+  // ---------- envoi vers SceneCue (WebRTC) ----------
   const encoding = (p) => ({ ...ENCODING[p.quality], active: p.active });
 
   async function encode(p) {
@@ -276,7 +276,7 @@
       close(viewer);
       return;
     }
-    // jamais de réponse : la page de Régie a été fermée entre-temps
+    // jamais de réponse : la page de SceneCue a été fermée entre-temps
     p.timer = setTimeout(() => {
       if (pcs.get(viewer) === p && pc.connectionState !== 'connected') {
         close(viewer);
@@ -299,12 +299,12 @@
   function askKey(text) {
     key = '';
     $('#key-row').hidden = false;
-    message(text || _('Entre le code affiché dans Régie, ou scanne son QR code.'));
+    message(text || _('Entre le code affiché dans SceneCue, ou scanne son QR code.'));
   }
 
   async function start() {
     if (!window.isSecureContext || !navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-      message(_("Safari bloque la caméra sur cette page : ouvre l'adresse en https:// (scanne le QR code affiché dans Régie)."));
+      message(_("Safari bloque la caméra sur cette page : ouvre l'adresse en https:// (scanne le QR code affiché dans SceneCue)."));
       return;
     }
     if (!key) {
@@ -315,7 +315,7 @@
     message('');
     refresh();
     try {
-      const r = await hello(); // réglages choisis dans Régie (caméra avant / arrière, qualité)
+      const r = await hello(); // réglages choisis dans SceneCue (caméra avant / arrière, qualité)
       facing = r.facing;
       quality = r.quality;
       await openCamera();
@@ -328,7 +328,7 @@
       if (e.status === 403) askKey(e.message);
       else if (e.status) message(e.message);
       else if (e instanceof DOMException) message(cameraError(e)); // refus ou erreur de getUserMedia
-      else message(_('Régie ne répond pas ({error}). Vérifie que Régie est ouverte et que le téléphone est sur le même Wi-Fi.', { error: e.message }));
+      else message(_('SceneCue ne répond pas ({error}). Vérifie que SceneCue est ouvert et que le téléphone est sur le même Wi-Fi.', { error: e.message }));
       if (id) api('/api/bye').catch(() => {});
       id = null;
     }

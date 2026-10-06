@@ -1,8 +1,8 @@
-/* Régie — compositeur de scène.
+/* SceneCue — compositeur de scène.
  * Empile les calques (une iframe par instance de module) et leur fournit leur bridge.
  *  - mode=overlay : la fenêtre plein écran transparente, pilotée par le processus principal.
- *  - sinon : aperçu intégré (vignette, arrière-plan d'un éditeur), alimenté par la fenêtre Régie
- *    via window.top.regieFeed. Paramètres : scene=<id>|@selected, ref=<calque>, only=below|above.
+ *  - sinon : aperçu intégré (vignette, arrière-plan d'un éditeur), alimenté par la fenêtre SceneCue
+ *    via window.top.sceneCueFeed. Paramètres : scene=<id>|@selected, ref=<calque>, only=below|above.
  */
 (function () {
   'use strict';
@@ -17,18 +17,18 @@
   const items = new Map(); // id du calque -> instance
 
   // appelé par les pages des calques (même origine) pour obtenir leur bridge
-  window.regieBridge = (win) => {
+  window.sceneCueBridge = (win) => {
     for (const L of items.values()) if (L.iframe.contentWindow === win) return L.bridge;
     return null;
   };
 
-  const topFeed = () => { try { return window.top !== window ? window.top.regieFeed : null; } catch { return null; } };
+  const topFeed = () => { try { return window.top !== window ? window.top.sceneCueFeed : null; } catch { return null; } };
 
-  // backend d'un module : directement dans l'overlay, via la fenêtre Régie dans les aperçus
+  // backend d'un module : directement dans l'overlay, via la fenêtre SceneCue dans les aperçus
   function callModule(module, method, args) {
     if (isOverlay) return host.callModule(module, method, args);
     const feed = topFeed();
-    return feed ? feed.call(module, method, args) : Promise.reject(new Error('Régie indisponible'));
+    return feed ? feed.call(module, method, args) : Promise.reject(new Error('SceneCue indisponible'));
   }
 
   function emit(L, channel, payload) {

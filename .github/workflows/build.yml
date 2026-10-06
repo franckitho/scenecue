@@ -1,12 +1,12 @@
-# Construit Regie.exe sur Windows à chaque push sur main et à chaque pull request :
+# Construit SceneCue.exe sur Windows à chaque push sur main et à chaque pull request :
 # le zip est téléchargeable 14 jours depuis l'onglet Actions (section « Artifacts »).
 #
 # Publier une version : pousse une étiquette qui commence par v
 #   git tag v1.2.0
 #   git push origin v1.2.0
-# → même construction, puis une release GitHub avec Regie-win-x64.zip.
+# → même construction, puis une release GitHub avec SceneCue-win-x64.zip.
 # Le nom du fichier ne change pas d'une version à l'autre : le lien
-# https://github.com/<compte>/<dépôt>/releases/latest/download/Regie-win-x64.zip
+# https://github.com/<compte>/<dépôt>/releases/latest/download/SceneCue-win-x64.zip
 # télécharge toujours la dernière version (c'est celui du site).
 name: Build
 
@@ -26,7 +26,7 @@ concurrency:
 
 jobs:
   build:
-    name: Regie.exe
+    name: SceneCue.exe
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@v7
@@ -40,7 +40,7 @@ jobs:
             cam/package-lock.json
             text-animated/package-lock.json
 
-      # Régie complète (avec Electron), puis seulement ce que les modules embarquent :
+      # SceneCue complet (avec Electron), puis seulement ce que les modules embarquent :
       # le QR code pour Caméra, les polices pour Texte animé (pas leur Electron à eux).
       - name: Dépendances
         run: |
@@ -59,11 +59,11 @@ jobs:
         run: npm run package
 
       - name: Zip
-        run: Compress-Archive -Path dist/Regie-win32-x64 -DestinationPath Regie-win-x64.zip
+        run: Compress-Archive -Path dist/SceneCue-win32-x64 -DestinationPath SceneCue-win-x64.zip
 
       - uses: actions/upload-artifact@v7
         with:
-          path: Regie-win-x64.zip
+          path: SceneCue-win-x64.zip
           archive: false # le zip tel quel, pas un zip dans un zip
           retention-days: 14
 
@@ -71,4 +71,4 @@ jobs:
         if: startsWith(github.ref, 'refs/tags/v')
         env:
           GH_TOKEN: ${{ github.token }}
-        run: gh release create "${{ github.ref_name }}" Regie-win-x64.zip --title "Régie ${{ github.ref_name }}" --generate-notes
+        run: gh release create "${{ github.ref_name }}" SceneCue-win-x64.zip --title "SceneCue ${{ github.ref_name }}" --generate-notes

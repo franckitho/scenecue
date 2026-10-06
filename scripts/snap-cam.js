@@ -1,4 +1,4 @@
-// Vérification du module « Caméra » : lance Régie avec un profil temporaire et une caméra factice de Chromium
+// Vérification du module « Caméra » : lance SceneCue avec un profil temporaire et une caméra factice de Chromium
 // (aucune vraie caméra n'est ouverte), ouvre la page « téléphone » dans une fenêtre cachée comme le ferait
 // Safari sur l'iPhone, et vérifie serveur HTTPS, certificat, signalisation et vidéo WebRTC jusqu'à l'overlay.
 // L'overlay est rendu invisible (opacité 0). Usage : npx electron scripts/snap-cam.js <dossier-de-sortie>
@@ -12,15 +12,16 @@ const crypto = require('crypto');
 const out = path.resolve(process.argv[process.argv.length - 1]);
 fs.mkdirSync(out, { recursive: true });
 app.setPath('userData', path.join(out, 'userdata'));
+app.commandLine.appendSwitch('lang', 'fr-FR'); // le scénario vérifie les textes français (SceneCue est en anglais par défaut)
 app.commandLine.appendSwitch('use-fake-device-for-media-stream'); // caméra de test de Chromium
 app.commandLine.appendSwitch('use-fake-ui-for-media-stream');
 
-// ports de test, pour ne pas gêner une Régie déjà lancée
+// ports de test, pour ne pas gêner un SceneCue déjà lancé
 const PORT = 18443, HTTP_PORT = 18080;
 const camData = path.join(out, 'userdata', 'modules', 'camera');
 fs.mkdirSync(camData, { recursive: true });
 fs.writeFileSync(path.join(camData, 'config.json'), JSON.stringify({ port: PORT, httpPort: HTTP_PORT, host: '127.0.0.1' })); // local : pas de fenêtre du pare-feu
-// comme l'utilisateur sur l'iPhone : on accepte le certificat auto-signé de Régie
+// comme l'utilisateur sur l'iPhone : on accepte le certificat auto-signé de SceneCue
 app.on('certificate-error', (e, _wc, url, _err, _cert, cb) => {
   if (url.startsWith(`https://127.0.0.1:${PORT}/`)) { e.preventDefault(); cb(true); } else cb(false);
 });
@@ -40,7 +41,7 @@ app.on('web-contents-created', (_e, wc) => {
   wc.on('console-message', (ev) => logs.push(`[${wc.getURL().split('/').slice(-1)[0]}] ${ev.level ?? ''} ${ev.message ?? ev}`));
 });
 
-require(process.env.REGIE_MAIN || '../src/main.js');
+require(process.env.SCENECUE_MAIN || '../src/main.js');
 
 const wait = (ms) => new Promise((r) => setTimeout(r, ms));
 function get(url, opts = {}) {
@@ -91,7 +92,7 @@ app.whenReady().then(async () => {
 
   // serveur vu depuis le réseau
   const page = await get(`https://127.0.0.1:${PORT}/`);
-  check('page du téléphone servie', page.status === 200 && page.body.includes('Régie · Caméra'));
+  check('page du téléphone servie', page.status === 200 && page.body.includes('SceneCue · Caméra'));
   const redirect = await get(`http://127.0.0.1:${HTTP_PORT}/`);
   check('http:// renvoie vers https:// avec le code', redirect.status === 301 && redirect.headers.location === `https://127.0.0.1:${PORT}/?k=${st.key}`, redirect.headers.location);
   const badKey = await get(`https://127.0.0.1:${PORT}/api/hello`, { method: 'POST', body: JSON.stringify({ key: 'nope' }) });
@@ -112,7 +113,7 @@ app.whenReady().then(async () => {
   check('aperçu : vidéo du téléphone reçue', previewLive, await pjs('JSON.stringify(info)'));
   check('aperçu en petite image (économie pour le téléphone)', previewLive && (await pjs('view.video.videoWidth')) <= 960, await videoSize(pjs));
   await until(() => pjs(`!!(srv.phone && srv.phone.info && srv.phone.info.viewers)`), 5000);
-  check('Régie voit le téléphone', await pjs(`!!(srv.phone && srv.phone.connected)`), await pjs(`document.querySelector('#phone-text').textContent`));
+  check('SceneCue voit le téléphone', await pjs(`!!(srv.phone && srv.phone.connected)`), await pjs(`document.querySelector('#phone-text').textContent`));
   await wait(1200);
   await save(main, '02-iphone-apercu');
   fs.writeFileSync(path.join(out, '03-telephone.png'), (await phone.webContents.capturePage()).toPNG());
@@ -127,14 +128,14 @@ app.whenReady().then(async () => {
   check('le téléphone indique « À l\'écran »', await until(() => ph(`document.querySelector('#pill-text').textContent === "À l'écran"`), 5000));
   await save(overlay, '04-overlay');
 
-  // commandes depuis Régie
+  // commandes depuis SceneCue
   await pjs(`document.querySelector('#facing [data-v="environment"]').click()`);
-  check('caméra arrière demandée depuis Régie', await until(() => ph(`document.querySelector('#facing .on') && document.querySelector('#facing .on').dataset.v === 'environment'`), 5000));
+  check('caméra arrière demandée depuis SceneCue', await until(() => ph(`document.querySelector('#facing .on') && document.querySelector('#facing .on').dataset.v === 'environment'`), 5000));
   check('vidéo toujours reçue après le changement de caméra', await until(() => ojs('view.live'), 8000));
 
   // hors antenne : le téléphone arrête d'encoder pour la sortie
   await js(`document.querySelector('#onair').click()`);
-  check('hors antenne : sortie mise en pause sur le téléphone', await until(() => ph(`document.querySelector('#pill-text').textContent === 'Aperçu dans Régie'`), 5000),
+  check('hors antenne : sortie mise en pause sur le téléphone', await until(() => ph(`document.querySelector('#pill-text').textContent === 'Aperçu dans SceneCue'`), 5000),
     await ph(`document.querySelector('#pill-text').textContent`));
   await js(`document.querySelector('#onair').click()`);
   check('retour à l\'écran : la sortie reprend', await until(() => ph(`document.querySelector('#pill-text').textContent === "À l'écran"`), 5000));

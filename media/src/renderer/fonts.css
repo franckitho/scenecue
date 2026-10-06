@@ -1,4 +1,4 @@
-/* Polices de l'interface, embarquées par Régie (ce module ne tourne que dans Régie) */
+/* Polices de l'interface, embarquées par SceneCue (ce module ne tourne que dans SceneCue) */
 @import url('../../../node_modules/@fontsource/archivo/400.css');
 @import url('../../../node_modules/@fontsource/archivo/500.css');
 @import url('../../../node_modules/@fontsource/archivo/600.css');

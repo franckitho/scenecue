@@ -1,4 +1,4 @@
-// Vérification de la traduction anglaise : lance Régie en anglais (profil temporaire), ouvre l'éditeur de chaque
+// Vérification de la traduction anglaise : lance SceneCue en anglais (profil temporaire), ouvre l'éditeur de chaque
 // module et la page du téléphone, et relève tout texte ou infobulle qui ressemble encore à du français.
 // Vérifie aussi le retour au français par le sélecteur de langue. Rien n'est filmé : caméra factice de Chromium.
 // Usage : npx electron scripts/snap-i18n.js <dossier-de-sortie>
@@ -9,7 +9,7 @@ const fs = require('fs');
 const out = path.resolve(process.argv[process.argv.length - 1]);
 fs.mkdirSync(out, { recursive: true });
 app.setPath('userData', path.join(out, 'userdata'));
-app.commandLine.appendSwitch('lang', 'en-US'); // système en anglais : Régie, ses modules et la page du téléphone aussi
+app.commandLine.appendSwitch('lang', 'en-US'); // système en anglais, pour la page du téléphone (SceneCue, lui, est en anglais par défaut)
 app.commandLine.appendSwitch('use-fake-device-for-media-stream');
 app.commandLine.appendSwitch('use-fake-ui-for-media-stream');
 
@@ -27,14 +27,14 @@ setTimeout(() => { console.error('délai dépassé'); console.error(results.join
 process.on('unhandledRejection', (e) => { console.error('ÉCHEC DU SCÉNARIO :', e); console.error(results.join('\n')); app.exit(1); });
 app.on('web-contents-created', (_e, wc) => wc.setAudioMuted(true));
 
-require(process.env.REGIE_MAIN || '../src/main.js');
+require(process.env.SCENECUE_MAIN || '../src/main.js');
 
 const wait = (ms) => new Promise((r) => setTimeout(r, ms));
 
 // textes visibles et infobulles qui ressemblent à du français (accents, guillemets, petits mots courants)
 const LEAKS = `(() => {
   const FR = /[àâçéèêëîïôûùœ«»]|\\b(le|la|les|des|du|une|et|pour|avec|sans|dans|sur|tes|ton|ta|est|pas|aucun|aucune|choisis|glisse|scène|calque)\\b/i;
-  const clean = (s) => String(s).replace(/Régie/g, '').replace(/\\s+/g, ' ').trim();
+  const clean = (s) => String(s).replace(/SceneCue/g, '').replace(/\\s+/g, ' ').trim();
   const out = new Set();
   const walk = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);
   for (let n = walk.nextNode(); n; n = walk.nextNode()) {
@@ -72,11 +72,11 @@ app.whenReady().then(async () => {
     try { fs.writeFileSync(path.join(out, `${name}.png`), (await w.webContents.capturePage()).toPNG()); } catch { /* fenêtre en plein rechargement */ }
   };
 
-  check('langue du système détectée : anglais', main.webContents.getURL().includes('lang=en'), main.webContents.getURL());
+  check('anglais par défaut', main.webContents.getURL().includes('lang=en'), main.webContents.getURL());
   check('scènes par défaut en anglais', (await js(`[...document.querySelectorAll('#scenes .row-name')].map((n) => n.textContent).join(',')`)) === 'Shower,BRB');
   check('sélecteur de langue sur EN', await js(`document.querySelector('#lang [data-v="en"]').classList.contains('on')`));
-  await leaks('fenêtre Régie', main.webContents);
-  await save(main, '01-regie-en');
+  await leaks('fenêtre SceneCue', main.webContents);
+  await save(main, '01-scenecue-en');
 
   // une scène vide, puis un calque de chaque module
   await js(`document.querySelector('#add-scene').click()`);

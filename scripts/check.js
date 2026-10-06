@@ -1,4 +1,4 @@
-// Vérifie la syntaxe de tous les fichiers JavaScript du projet (Régie, modules, scripts, site).
+// Vérifie la syntaxe de tous les fichiers JavaScript du projet (SceneCue, modules, scripts, site).
 // Usage : npm run check — utilisé aussi par la pipeline avant de construire l'exécutable.
 const { execFileSync } = require('child_process');
 const fs = require('fs');

@@ -2,7 +2,7 @@
 
 <img src="assets/icon.png" width="96" alt="">
 
-# Régie
+# SceneCue
 
 **Scene control for streaming on Discord.**
 Animated text, images, GIFs, videos and camera (even your iPhone's) shown on top of your screen,
@@ -17,14 +17,14 @@ on a transparent background, on demand or with a keyboard shortcut.
 
 </div>
 
-![Régie: editing a “Be right back” scene in animated text](docs/images/texte-anime-en.png)
+![SceneCue: editing a “Be right back” scene in animated text](docs/images/texte-anime-en.png)
 
 ## Why
 
 When you share your screen on Discord, your friends see what you see and nothing more. No “Be right back” scene,
 no timer, no camera overlay, unless you set up OBS and a virtual camera.
 
-Régie (French for *control room*) does it right on your desktop. You prepare **scenes** (“BRB”, “In the shower”, “Eating”…),
+SceneCue does it right on your desktop. You prepare **scenes** (“BRB”, “In the shower”, “Eating”…),
 then put one **on screen** in one click or with a shortcut. It shows on top of everything, on a transparent background,
 and clicks go through it: you keep using your PC normally.
 Share your **entire screen** in Discord and the scene is part of the stream.
@@ -41,7 +41,7 @@ Share your **entire screen** in Discord and the scene is part of the stream.
   Play *once*, *looped* or *boomerang*, with speed, trimming and sound.
 - **Camera**: webcam or capture card, or **your iPhone's camera over Wi-Fi**, with no app to install.
   Round or circle shape, border, zoom and crop.
-- **French or English interface**: Régie follows the Windows language, and the **FR | EN** switch in the title bar changes it at any time.
+- **French or English interface**: SceneCue starts in English, and the **FR | EN** switch in the title bar changes it at any time.
 - **Everything stays with you**: no account, no telemetry, no outside server.
   The iPhone's video only travels over your local network.
 - **Extensible**: each kind of layer is a module (an HTML page and a `module.json`). See [Writing a module](#writing-a-module).
@@ -51,9 +51,10 @@ Share your **entire screen** in Discord and the scene is part of the stream.
 ### With the executable
 
 1. Download the latest version from the [**website**](https://franckitho.github.io/scenecue/) or the [**Releases**](https://github.com/franckitho/scenecue/releases/latest) page.
-2. Unzip it anywhere and run **`Regie.exe`**.
+2. Unzip it anywhere and run **`SceneCue.exe`**.
 
-Nothing is installed on the system. Settings live in `%APPDATA%\Regie`: delete that folder to start from scratch.
+Nothing is installed on the system. Settings live in `%APPDATA%\SceneCue`: delete that folder to start from scratch.
+Used the app when it was called Régie? Your scenes, media library and camera settings are picked up from `%APPDATA%\Regie` on first launch.
 
 > Windows SmartScreen may warn you on first launch because the executable is not signed: *More info › Run anyway*.
 
@@ -75,14 +76,14 @@ npm start
 2. **Layers**: `+` to add a module to the scene. The top layer is drawn over the others.
    Click a layer to edit it: the scene's other layers stay visible behind the preview.
 3. **Put on screen** shows the selected scene. If another scene is already on screen, the button becomes **Switch to…**.
-4. In Discord, share your **entire screen** (not a window) and pick the screen set as **Output** at the bottom left of Régie.
+4. In Discord, share your **entire screen** (not a window) and pick the screen set as **Output** at the bottom left of SceneCue.
 
 | Shortcut (anywhere) | Action |
 |---|---|
 | **Ctrl+Alt+B** | Show or cut the selected scene |
 | **Ctrl+Alt+1** … **9** | Show scene # (or cut it if it is already on screen) |
 
-If you close the window while a scene is on screen, Régie goes to the notification area.
+If you close the window while a scene is on screen, SceneCue goes to the notification area.
 Right-click its icon to switch scenes or quit.
 
 ## Modules
@@ -126,12 +127,12 @@ Boomerang keeps frames in memory: it is meant for short clips (under 10 s). It i
 1. Put the iPhone and the PC on the **same network**.
 2. Scan the **QR code** shown in the editor with the iPhone's Camera app.
 3. Safari says “This Connection Is Not Private”. That's expected: Safari only allows the camera over HTTPS,
-   and Régie creates its own certificate. Tap **Show Details › visit this website**.
+   and SceneCue creates its own certificate. Tap **Show Details › visit this website**.
 4. Tap **Start** and allow the camera. Keep Safari in the foreground and the screen on.
 
 Then:
-- front or back camera and quality (720p or 1080p) can be changed from Régie or from the phone;
-- the picture sent to the screen is full quality. Régie's previews get a small picture,
+- front or back camera and quality (720p or 1080p) can be changed from SceneCue or from the phone;
+- the picture sent to the screen is full quality. SceneCue's previews get a small picture,
   and when off air the phone stops encoding the on-screen picture to save battery;
 - the address contains a secret code: another device on the network can't send its video into your stream.
 
@@ -141,29 +142,29 @@ The phone page follows the phone's language (French or English).
 
 | Problem | Solution |
 |---|---|
-| The scene doesn't show in the stream | Share your **entire screen** in Discord, not a window, and check the **Output** screen in Régie. |
+| The scene doesn't show in the stream | Share your **entire screen** in Discord, not a window, and check the **Output** screen in SceneCue. |
 | A game covers the scene | Switch the game to **borderless windowed**: exclusive fullscreen covers everything. |
-| Ctrl+Alt+B does nothing | Another application already uses this shortcut (for example Pancarte, running at the same time): it then shows greyed out at the bottom of Régie's window. |
+| Ctrl+Alt+B does nothing | Another application already uses this shortcut (for example Pancarte, running at the same time): it then shows greyed out at the bottom of SceneCue's window. |
 | The iPhone can't open the page | Same Wi-Fi on both sides. On first launch, Windows asks for network access: allow **private networks**. If your Wi-Fi profile is **public**, switch it to **private**. Several network adapters (VPN, WSL, virtual machines): pick the right one under **Network adapter**. |
 | “Safari blocks the camera” | Use the `https://` address (the one in the QR code). The `http://…:8080` address redirects to it automatically. |
 | The iPhone's picture freezes | iOS cuts the camera when Safari goes to the background or the screen locks. Come back to the page: it reconnects by itself. |
 | “Camera already used” | Discord, OBS or Teams are using the webcam. Close them, then click **Retry**. |
-| “Port 8443 is already used” | Another application uses this port. Change `port` in `%APPDATA%\Regie\modules\camera\config.json` and restart Régie. |
+| “Port 8443 is already used” | Another application uses this port. Change `port` in `%APPDATA%\SceneCue\modules\camera\config.json` and restart SceneCue. |
 
 ## Privacy
 
-- Régie contacts no server: fonts and libraries are bundled, and there is no account, no auto-update, no analytics.
+- SceneCue contacts no server: fonts and libraries are bundled, and there is no account, no auto-update, no analytics.
 - The Camera module's server only starts when a layer uses the iPhone source. It listens on your local network
   (ports 8443 and 8080). Only a device that has the QR code's secret code can send its video to it.
   The video goes straight from the phone to the PC (WebRTC), without going through the Internet.
-- Files imported into the library are copied to `%APPDATA%\Regie\media`. They never leave your PC.
+- Files imported into the library are copied to `%APPDATA%\SceneCue\media`. They never leave your PC.
 
 ## Development
 
 ```bash
-npm start                                      # Régie in development mode
+npm start                                      # SceneCue in development mode
 npm run check                                  # syntax check of every JavaScript file
-npm run package                                # builds dist/Regie-win32-x64/Regie.exe (close Régie first)
+npm run package                                # builds dist/SceneCue-win32-x64/SceneCue.exe (close SceneCue first)
 npm run site                                   # builds the website into _site/ (add -- --repo=owner/name for the links)
 cd text-animated && npm install && npm start   # the Animated text module on its own (Pancarte)
 ```
@@ -175,7 +176,7 @@ Code comments are in French.
 ### Layout
 
 ```
-├─ src/              Régie: main process, window, compositor, overlay
+├─ src/              SceneCue: main process, window, compositor, overlay
 ├─ text-animated/    Animated text module (also runs on its own: Pancarte)
 ├─ media/            Image / video module
 ├─ cam/              Camera module (HTTPS server + page for the phone)
@@ -186,8 +187,8 @@ Code comments are in French.
 └─ CLAUDE.md         detailed architecture and known pitfalls
 ```
 
-Every page is served by an internal protocol (`regie://app`).
-Each layer is an iframe of the same origin, which is how it gets its “bridge” to Régie.
+Every page is served by an internal protocol (`scenecue://app`).
+Each layer is an iframe of the same origin, which is how it gets its “bridge” to SceneCue.
 The overlay is a transparent, always-on-top window that lets clicks through.
 Details are in [CLAUDE.md](CLAUDE.md).
 
@@ -204,7 +205,7 @@ No unit tests. **Scenarios** run the real application with a temporary profile, 
 take screenshots and check the result:
 
 ```bash
-npx electron scripts/snap.js <folder>         # Régie: scenes, layers, putting on screen
+npx electron scripts/snap.js <folder>         # SceneCue: scenes, layers, putting on screen
 npx electron scripts/snap-media.js <folder>   # Image / video: 31 checks (results.txt)
 npx electron scripts/snap-cam.js <folder>     # Camera: 27 checks, with a simulated iPhone
 npx electron scripts/snap-i18n.js <folder>    # English interface: no French left, switch back to French
@@ -212,23 +213,23 @@ npx electron scripts/snap-i18n.js <folder>    # English interface: no French lef
 
 Each takes about a minute and opens windows. They are muted, and the camera scenarios use Chromium's fake camera:
 your webcam is never opened. To test the built executable, add
-`REGIE_MAIN="C:/path/dist/Regie-win32-x64/resources/app.asar/src/main.js"`.
+`SCENECUE_MAIN="C:/path/dist/SceneCue-win32-x64/resources/app.asar/src/main.js"`.
 
 ### Releases and website
 
 Two GitHub Actions pipelines live in [.github/workflows](.github/workflows):
 
-- **Build** (`build.yml`) builds `Regie.exe` on Windows for every push to `main` and every pull request.
+- **Build** (`build.yml`) builds `SceneCue.exe` on Windows for every push to `main` and every pull request.
   The zip can be downloaded for 14 days from the run's *Artifacts*.
 - **Publish a release**: push a tag starting with `v`. The same pipeline builds the executable with that version number
-  and creates a GitHub release with `Regie-win-x64.zip`:
+  and creates a GitHub release with `SceneCue-win-x64.zip`:
 
   ```bash
   git tag v1.0.0
   git push origin v1.0.0
   ```
 
-  The file name never changes, so `releases/latest/download/Regie-win-x64.zip` always downloads the latest version.
+  The file name never changes, so `releases/latest/download/SceneCue-win-x64.zip` always downloads the latest version.
 - **Website** (`pages.yml`) publishes `site/` to GitHub Pages on every change. Enable it once in
   *Settings › Pages › Build and deployment › Source: GitHub Actions*. The website's download button reads
   the latest release when the page loads: publishing a version doesn't require redeploying the site.
@@ -237,7 +238,7 @@ Two GitHub Actions pipelines live in [.github/workflows](.github/workflows):
 
 A module is a folder with a `module.json`: two HTML pages (the editor and the on-screen render),
 and optionally a Node script (`main`) for what needs the system (server, files…).
-Régie detects it at startup and adds it to the catalog.
+SceneCue detects it at startup and adds it to the catalog.
 
 ```json
 {

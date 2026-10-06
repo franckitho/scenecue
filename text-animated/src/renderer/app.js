@@ -4,14 +4,14 @@
 const P = window.Pancarte;
 const _ = I18N.t; // traduction (voir i18n.js et en.js)
 I18N.apply();
-// Le bridge vient du preload en solo, ou de Régie quand le module est chargé dans une scène.
+// Le bridge vient du preload en solo, ou de SceneCue quand le module est chargé dans une scène.
 const api = window.bridge || hostBridge() || stubBridge();
 document.body.classList.toggle('embed', !!api.embedded);
 
 function hostBridge() {
   try {
-    return window.parent !== window && typeof window.parent.regieBridge === 'function'
-      ? window.parent.regieBridge(window)
+    return window.parent !== window && typeof window.parent.sceneCueBridge === 'function'
+      ? window.parent.sceneCueBridge(window)
       : null;
   } catch { return null; }
 }
@@ -590,7 +590,7 @@ function setupSections() {
   live = !!init.live;
   since = init.since;
 
-  // Dans Régie : les autres calques de la scène s'affichent sous et sur l'aperçu
+  // Dans SceneCue : les autres calques de la scène s'affichent sous et sur l'aperçu
   if (init.backdrop) {
     for (const [where, url] of [['below', init.backdrop.below], ['above', init.backdrop.above]]) {
       if (!url) continue;

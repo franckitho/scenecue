@@ -2,7 +2,7 @@
 
 Shows animated text (WordArt style) on a transparent background, on top of the whole screen, so your friends see it in your Discord stream while you're away.
 
-It is also the **Animated text** module of [Régie](../README.md) (see `module.json`). The same code runs on its own or as a layer in a scene.
+It is also the **Animated text** module of [SceneCue](../README.md) (see `module.json`). The same code runs on its own or as a layer in a scene.
 
 ## Usage
 

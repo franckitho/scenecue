@@ -1,4 +1,4 @@
-// Outil de vérification : lance Régie avec un profil temporaire, joue un scénario, enregistre des captures.
+// Outil de vérification : lance SceneCue avec un profil temporaire, joue un scénario, enregistre des captures.
 // L'overlay est rendu invisible (opacité 0) : rien ne s'affiche réellement à l'écran pendant le test.
 // Usage : npx electron scripts/snap.js <dossier-de-sortie>
 const { app, BrowserWindow } = require('electron');
@@ -8,11 +8,12 @@ const fs = require('fs');
 const out = path.resolve(process.argv[process.argv.length - 1]);
 fs.mkdirSync(out, { recursive: true });
 app.setPath('userData', path.join(out, 'userdata'));
+app.commandLine.appendSwitch('lang', 'fr-FR'); // le scénario vérifie les textes français (SceneCue est en anglais par défaut)
 setTimeout(() => { console.error('délai dépassé'); app.exit(1); }, 90000);
 process.on('unhandledRejection', (e) => { console.error('ÉCHEC DU SCÉNARIO :', e); app.exit(1); });
 
-// REGIE_MAIN permet de tester la version packagée : …/resources/app.asar/src/main.js
-require(process.env.REGIE_MAIN || '../src/main.js');
+// SCENECUE_MAIN permet de tester la version packagée : …/resources/app.asar/src/main.js
+require(process.env.SCENECUE_MAIN || '../src/main.js');
 
 const wait = (ms) => new Promise((r) => setTimeout(r, ms));
 const logs = [];
@@ -31,7 +32,7 @@ app.whenReady().then(async () => {
   const js = (code) => main.webContents.executeJavaScript(code);
   const panelJs = (code) => js(`(() => { const d = document.querySelector('#panel').contentDocument; ${code} })()`);
 
-  await save(main, '01-regie');
+  await save(main, '01-scenecue');
 
   await js(`document.querySelector('#onair').click()`);
   await wait(2200);
@@ -64,6 +65,6 @@ app.whenReady().then(async () => {
   await js(`document.querySelector('#cut') && !document.querySelector('#cut').hidden ? document.querySelector('#cut').click() : document.querySelector('#onair').click()`);
   await wait(800);
   fs.writeFileSync(path.join(out, 'console.log'), logs.join('\n'));
-  fs.copyFileSync(path.join(out, 'userdata', 'regie.json'), path.join(out, 'regie.json'));
+  fs.copyFileSync(path.join(out, 'userdata', 'scenecue.json'), path.join(out, 'scenecue.json'));
   app.quit();
 });

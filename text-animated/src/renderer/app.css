@@ -700,7 +700,7 @@ kbd {
 .tip { margin: 0 0 0 auto; color: var(--faint); font-size: 12px; text-align: right; }
 .tip b { color: var(--text-2); font-weight: 600; }
 
-/* ---------- intégré dans Régie ---------- */
+/* ---------- intégré dans SceneCue ---------- */
 body.embed { grid-template-rows: 1fr; }
 body.embed .titlebar,
 body.embed .transport,

@@ -6,18 +6,18 @@ const _ = I18N.t; // traduction (voir i18n.js et en.js)
 I18N.apply();
 // virgule décimale en français, point en anglais
 const dec = (v) => (I18N.lang === 'fr' ? String(v).replace('.', ',') : String(v));
-// Le bridge vient de Régie, qui charge ce module dans une scène.
+// Le bridge vient de SceneCue, qui charge ce module dans une scène.
 const api = window.bridge || hostBridge() || stubBridge();
 
 function hostBridge() {
   try {
-    return window.parent !== window && typeof window.parent.regieBridge === 'function'
-      ? window.parent.regieBridge(window)
+    return window.parent !== window && typeof window.parent.sceneCueBridge === 'function'
+      ? window.parent.sceneCueBridge(window)
       : null;
   } catch { return null; }
 }
 
-// Permet d'ouvrir index.html dans un navigateur classique (sans Régie) pour travailler l'interface.
+// Permet d'ouvrir index.html dans un navigateur classique (sans SceneCue) pour travailler l'interface.
 function stubBridge() {
   const lib = [];
   const input = document.getElementById('file-input');
@@ -602,7 +602,7 @@ function setupSections() {
   state = M.clone(M.merge(M.DEFAULT_STATE, init.state || {}));
   displays = init.displays || [];
 
-  // Dans Régie : les autres calques de la scène s'affichent sous et sur l'aperçu
+  // Dans SceneCue : les autres calques de la scène s'affichent sous et sur l'aperçu
   if (init.backdrop) {
     for (const [where, url] of [['below', init.backdrop.below], ['above', init.backdrop.above]]) {
       if (!url) continue;

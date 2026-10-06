@@ -1,7 +1,7 @@
-// Module Caméra — backend, chargé dans le processus principal de Régie.
+// Module Caméra — backend, chargé dans le processus principal de SceneCue.
 // Serveur HTTPS sur le réseau local : il sert la page à ouvrir sur l'iPhone et relaie la signalisation WebRTC
-// entre le téléphone (qui envoie sa caméra) et les calques de Régie (qui la reçoivent). La vidéo, elle,
-// circule directement du téléphone vers Régie (WebRTC), sans passer par ce serveur.
+// entre le téléphone (qui envoie sa caméra) et les calques de SceneCue (qui la reçoivent). La vidéo, elle,
+// circule directement du téléphone vers SceneCue (WebRTC), sans passer par ce serveur.
 //
 //  téléphone : POST /api/hello → id   GET /api/events (SSE : viewer, answer, bye, active, config, kicked)
 //              POST /api/offer, /api/info, /api/config, /api/gone, /api/bye
@@ -55,7 +55,7 @@ function readJson(req) {
 }
 
 module.exports = function backend(ctx) {
-  // messages affichés dans Régie, dans la langue de l'interface (ceux destinés au téléphone sont traduits par sa page)
+  // messages affichés dans SceneCue, dans la langue de l'interface (ceux destinés au téléphone sont traduits par sa page)
   const L = (fr, en) => (ctx.lang && ctx.lang() === 'en' ? en : fr);
   const configFile = path.join(ctx.dataDir, 'config.json');
   // host : interface d'écoute ('0.0.0.0' = tout le réseau local ; '127.0.0.1' = ce PC seulement)
@@ -189,7 +189,7 @@ module.exports = function backend(ctx) {
     const body = await readJson(req);
     const reply = (code, data) => { res.writeHead(code, { 'Content-Type': 'application/json' }); res.end(JSON.stringify(data || {})); };
     if (url.pathname === '/api/hello') {
-      if (body.key !== config.key) { reply(403, { error: 'Code incorrect : scanne le QR code affiché dans Régie.' }); return; }
+      if (body.key !== config.key) { reply(403, { error: 'Code incorrect : scanne le QR code affiché dans SceneCue.' }); return; }
       if (phone && phone.sse) { send({ type: 'kicked' }); phone.sse.end(); }
       if (phone) clearTimeout(phone.lost);
       phone = { id: crypto.randomBytes(12).toString('hex'), sse: null, info: body.info || null, lost: null };
@@ -246,13 +246,13 @@ module.exports = function backend(ctx) {
     notify();
   }
 
-  function applyConfig(patch, fromRegie) {
+  function applyConfig(patch, fromSceneCue) {
     let changed = false;
     if (patch.facing === 'user' || patch.facing === 'environment') { changed = changed || config.facing !== patch.facing; config.facing = patch.facing; }
     if (patch.quality === '720' || patch.quality === '1080') { changed = changed || config.quality !== patch.quality; config.quality = patch.quality; }
     if (!changed) return;
     saveConfig();
-    if (fromRegie) send({ type: 'config', facing: config.facing, quality: config.quality });
+    if (fromSceneCue) send({ type: 'config', facing: config.facing, quality: config.quality });
     notify();
   }
 

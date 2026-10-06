@@ -4,10 +4,10 @@ const fs = require('fs');
 const { Readable } = require('stream');
 const { pathToFileURL } = require('url');
 
-// Tout (Régie, compositeur, modules) est servi par regie://app pour partager la même origine :
+// Tout (SceneCue, compositeur, modules) est servi par scenecue://app pour partager la même origine :
 // les pages des modules, chargées en iframe, récupèrent ainsi leur bridge auprès de la page parente.
-const ROOT = path.join(__dirname, '..'); // dossier de Régie (ou app.asar une fois packagée)
-const ORIGIN = 'regie://app';
+const ROOT = path.join(__dirname, '..'); // dossier de SceneCue (ou app.asar une fois packagée)
+const ORIGIN = 'scenecue://app';
 const ASSETS = path.join(ROOT, 'assets');
 const PRELOAD = path.join(__dirname, 'preload.js');
 const HOTKEY_TOGGLE = 'Control+Alt+B';
@@ -18,11 +18,36 @@ const MEDIA_TYPES = {
 };
 
 protocol.registerSchemesAsPrivileged([
-  { scheme: 'regie', privileges: { standard: true, secure: true, supportFetchAPI: true, corsEnabled: true, stream: true } },
+  { scheme: 'scenecue', privileges: { standard: true, secure: true, supportFetchAPI: true, corsEnabled: true, stream: true } },
 ]);
 // WebRTC sur le réseau local (module Caméra) : annoncer les vraies adresses IP plutôt que des noms mDNS,
 // que Windows ou le téléphone ne savent pas toujours résoudre.
 app.commandLine.appendSwitch('disable-features', 'WebRtcHideLocalIpsWithMdns');
+
+// L'application s'appelait Régie : au premier lancement, reprend les scènes, la médiathèque et les réglages
+// des modules de %APPDATA%\Regie. Rien à faire quand un script de test a choisi son propre dossier.
+function migrateFromRegie() {
+  const appData = app.getPath('appData');
+  const dir = app.getPath('userData');
+  const old = path.join(appData, 'Regie');
+  if (dir !== path.join(appData, 'SceneCue') || fs.existsSync(path.join(dir, 'scenecue.json'))) return;
+  if (!fs.existsSync(path.join(old, 'regie.json'))) return;
+  try {
+    fs.mkdirSync(dir, { recursive: true });
+    for (const sub of ['media', 'modules']) {
+      const from = path.join(old, sub);
+      if (!fs.existsSync(from)) continue;
+      // un fichier encore ouvert par l'ancienne version empêche le déplacement : on copie
+      try { fs.renameSync(from, path.join(dir, sub)); } catch { fs.cpSync(from, path.join(dir, sub), { recursive: true, force: false }); }
+    }
+    // en dernier : tant que scenecue.json manque, la reprise sera retentée au prochain lancement
+    const json = fs.readFileSync(path.join(old, 'regie.json'), 'utf8').split('regie://app/').join('scenecue://app/');
+    fs.writeFileSync(path.join(dir, 'scenecue.json'), json);
+  } catch (e) {
+    console.error('reprise du dossier de Régie impossible', e);
+  }
+}
+migrateFromRegie();
 
 let win = null;
 let overlay = null;
@@ -40,9 +65,9 @@ let quitting = false;
 let trayHinted = false;
 
 const uid = (p) => `${p}${Date.now().toString(36)}${Math.random().toString(36).slice(2, 6)}`;
-// langue de l'interface : choisie dans Régie, sinon celle du système (français ou anglais)
+// langue de l'interface : choisie dans SceneCue, sinon l'anglais (--lang=fr au lancement pour partir en français)
 const lang = () => (store && (store.lang === 'fr' || store.lang === 'en') ? store.lang
-  : app.getLocale().toLowerCase().startsWith('fr') ? 'fr' : 'en');
+  : /^fr/i.test(app.commandLine.getSwitchValue('lang')) ? 'fr' : 'en');
 const L = (fr, en) => (lang() === 'en' ? en : fr);
 const pageUrl = (page, query = '') => `${ORIGIN}/src/renderer/${page}?${query}${query ? '&' : ''}lang=${lang()}`;
 const urlFor = (rel) => `${ORIGIN}/${rel.split(path.sep).join('/').split('/').map(encodeURIComponent).join('/')}`;
@@ -116,7 +141,7 @@ function loadBackends() {
 }
 
 // ---------- persistance ----------
-const storeFile = () => path.join(app.getPath('userData'), 'regie.json');
+const storeFile = () => path.join(app.getPath('userData'), 'scenecue.json');
 
 // Au premier lancement, reprend le texte et les styles déjà réglés dans Pancarte (text-animated en solo).
 function importPancarte() {
@@ -166,7 +191,7 @@ const sceneById = (id) => store.scenes.find((s) => s.id === id) || null;
 
 // ---------- médiathèque ----------
 // Les images et vidéos importées sont copiées dans userData/media : une scène reste valable
-// même si le fichier d'origine est déplacé. Elles sont servies par regie://app/@media/<fichier>.
+// même si le fichier d'origine est déplacé. Elles sont servies par scenecue://app/@media/<fichier>.
 const mediaDir = () => path.join(app.getPath('userData'), 'media');
 const mediaExt = (name) => path.extname(name).slice(1).toLowerCase();
 const mediaInfo = (m) => ({ ...m, url: `${ORIGIN}/@media/${encodeURIComponent(m.file)}` });
@@ -249,7 +274,7 @@ function createOverlay() {
     skipTaskbar: true,
     hasShadow: false,
     alwaysOnTop: true,
-    title: 'Régie — overlay',
+    title: 'SceneCue — overlay',
     webPreferences: { preload: PRELOAD, backgroundThrottling: false },
   });
   overlay.setAlwaysOnTop(true, 'screen-saver');
@@ -314,7 +339,7 @@ function createWindow() {
     minHeight: 720,
     show: false,
     backgroundColor: '#0E0D0C',
-    title: 'Régie',
+    title: 'SceneCue',
     icon: path.join(ASSETS, 'icon.png'),
     titleBarStyle: 'hidden',
     titleBarOverlay: { color: '#0E0D0C', symbolColor: '#A39B90', height: 40 },
@@ -331,8 +356,8 @@ function createWindow() {
         trayHinted = true;
         tray.displayBalloon({
           title: L("La scène reste à l'écran", 'The scene stays on screen'),
-          content: L("Ctrl+Alt+B pour la couper. Clic sur l'icône pour rouvrir Régie, clic droit pour quitter.",
-            'Ctrl+Alt+B to cut it. Click the icon to reopen Régie, right-click to quit.'),
+          content: L("Ctrl+Alt+B pour la couper. Clic sur l'icône pour rouvrir SceneCue, clic droit pour quitter.",
+            'Ctrl+Alt+B to cut it. Click the icon to reopen SceneCue, right-click to quit.'),
           iconType: 'none',
         });
       }
@@ -352,7 +377,7 @@ function focusWindow() {
 function updateTray() {
   if (!tray) return;
   const current = sceneById(live.scene);
-  tray.setToolTip(current ? `Régie — ${L("à l'écran", 'on screen')} : ${current.name}` : 'Régie');
+  tray.setToolTip(current ? `SceneCue — ${L("à l'écran", 'on screen')} : ${current.name}` : 'SceneCue');
   tray.setContextMenu(Menu.buildFromTemplate([
     ...store.scenes.map((s) => ({
       label: s.name,
@@ -362,7 +387,7 @@ function updateTray() {
     })),
     { type: 'separator' },
     { label: L('Couper', 'Cut'), enabled: !!live.scene, click: () => setLive(null) },
-    { label: L('Ouvrir Régie', 'Open Régie'), click: focusWindow },
+    { label: L('Ouvrir SceneCue', 'Open SceneCue'), click: focusWindow },
     { type: 'separator' },
     { label: L('Quitter', 'Quit'), click: () => app.quit() },
   ]));
@@ -440,7 +465,7 @@ ipcMain.on('timer-reset', () => {
   if (win) win.webContents.send('live', live);
 });
 
-// langue de l'interface : la fenêtre Régie se recharge, l'overlay aussi s'il n'affiche rien
+// langue de l'interface : la fenêtre SceneCue se recharge, l'overlay aussi s'il n'affiche rien
 ipcMain.on('lang', (_e, value) => {
   if (value !== 'fr' && value !== 'en') return;
   store.lang = value;
@@ -506,9 +531,9 @@ if (!app.requestSingleInstanceLock()) {
   app.on('second-instance', focusWindow);
 
   app.whenReady().then(() => {
-    app.setAppUserModelId('Regie');
+    app.setAppUserModelId('SceneCue');
 
-    protocol.handle('regie', (req) => {
+    protocol.handle('scenecue', (req) => {
       const rel = decodeURIComponent(new URL(req.url).pathname);
       if (rel.startsWith('/@media/')) return serveMedia(req, rel.slice('/@media/'.length));
       const file = path.normalize(path.join(ROOT, rel));
