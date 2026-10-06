@@ -4,12 +4,12 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>SceneCue — scene control for Discord streams</title>
-  <meta name="description" content="Animated text, images, videos and camera (even your iPhone's) on top of your screen, for streaming on Discord. Free, open source, for Windows.">
+  <meta name="description" content="Animated text, images, videos, camera (even your iPhone's) and the song playing on Spotify, on top of your screen or on a broadcast screen, for streaming on Discord. Free, open source, for Windows.">
   <meta name="theme-color" content="#FF4D1F">
   <meta property="og:type" content="website">
   <meta property="og:site_name" content="SceneCue">
   <meta property="og:title" content="SceneCue — scene control for Discord streams">
-  <meta property="og:description" content="Animated text, images, videos and camera (even your iPhone's) on top of your screen. Free and open source.">
+  <meta property="og:description" content="Animated text, images, videos, camera (even your iPhone's) and the song playing on Spotify, on top of your screen. Free and open source.">
   <meta property="og:image" content="__BASE__images/texte-anime-en.png">
   <meta property="og:url" content="__BASE__">
   <meta name="twitter:card" content="summary_large_image">
@@ -26,6 +26,7 @@
       <a href="#comment">Comment ça marche</a>
       <a href="#modules">Modules</a>
       <a href="#iphone">iPhone</a>
+      <a href="#diffusion">Diffusion</a>
       <a href="#questions">Questions</a>
     </nav>
     <div class="top-right">
@@ -43,7 +44,7 @@
     <div class="hero-text">
       <p class="eyebrow"><span class="lamp"></span>Pour streamer sur Discord</p>
       <h1 data-i18n>Ta régie de stream, <em>par-dessus</em> ton écran.</h1>
-      <p class="lead">Texte animé, images, GIF, vidéos et caméra (même celle de ton iPhone), sur fond transparent, à l'écran d'un clic ou d'un raccourci. Tes potes les voient dans ton partage d'écran, et toi tu continues à utiliser ton PC.</p>
+      <p class="lead">Texte animé, images, GIF, vidéos, caméra (même celle de ton iPhone) et le morceau qui passe sur Spotify, sur fond transparent, à l'écran d'un clic ou d'un raccourci. Tes potes les voient dans ton partage d'écran, et toi tu continues à utiliser ton PC.</p>
       <div class="cta">
         <a class="btn-dl" data-dl href="#">
           <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M0 2.3l6.5-.9v6.2H0zm7.3-1L16 0v7.6H7.3zM0 8.4h6.5v6.2L0 13.7zm7.3 0H16V16l-8.7-1.2z" /></svg>
@@ -62,7 +63,7 @@
     <div class="wrap">
       <h2 class="label">Comment ça marche</h2>
       <ol class="steps">
-        <li><b>Prépare tes scènes</b><span>« BRB », « Sous la douche », « À table »… Chaque scène empile des calques : texte, image, vidéo, caméra.</span></li>
+        <li><b>Prépare tes scènes</b><span>« BRB », « Sous la douche », « À table »… Chaque scène empile des calques : texte, image, vidéo, caméra, musique.</span></li>
         <li><b>Mets-en une à l'écran</b><span data-i18n>D'un clic, ou avec <kbd>Ctrl</kbd><kbd>Alt</kbd><kbd>B</kbd> depuis n'importe quelle app. <kbd>Ctrl</kbd><kbd>Alt</kbd><kbd>1</kbd>…<kbd>9</kbd> appelle une scène par son numéro.</span></li>
         <li><b>Partage ton écran entier</b><span>Dans Discord. La scène s'affiche par-dessus tout, sur fond transparent, et tes clics passent au travers.</span></li>
       </ol>
@@ -99,6 +100,17 @@
         <p data-i18n>Une webcam, une carte d'acquisition ou ton <b>iPhone par le Wi-Fi</b>, sans rien installer dessus. Tu peux mettre l'image dans un cercle ou un cadre arrondi, ajouter une bordure, zoomer et recadrer.</p>
       </div>
     </article>
+
+    <article class="mod mod--text">
+      <div class="mod-text">
+        <h2 class="label">Musique en cours</h2>
+        <h3>Le morceau qui passe, tout seul.</h3>
+        <p>La pochette, le titre, l'artiste et la progression du morceau que joue l'appli Spotify, mis à jour tout seul. Rien à connecter : SceneCue le lit dans les contrôles multimédias de Windows, sans compte Spotify.</p>
+      </div>
+      <ul class="tags">
+        <li>Carte</li><li>Compact</li><li>Grande pochette</li><li>Couleur de la pochette</li><li>Égaliseur</li><li>Fondu</li><li>Glissement</li><li>Estompée en pause</li>
+      </ul>
+    </article>
   </section>
 
   <section class="band" id="iphone">
@@ -120,6 +132,24 @@
     </div>
   </section>
 
+  <section class="wrap split diffusion" id="diffusion">
+    <div>
+      <h2 class="label">Ton écran reste dégagé</h2>
+      <p class="intro" data-i18n>Plus tu empiles de calques, moins tu vois ton écran. Avec <b>Diffusion</b>, SceneCue affiche une copie en direct de ton écran, scène comprise, sur un autre écran. C'est lui que tu partages dans Discord : ton écran à toi reste propre.</p>
+      <ol class="steps steps--compact">
+        <li><b>Installe l'écran virtuel</b><span data-i18n>Une seule fois : le pilote gratuit <a href="https://github.com/VirtualDrivers/Virtual-Display-Driver">Virtual Display Driver</a>, puis <i>Install Driver</i> dans VDD Control.</span></li>
+        <li><b>Choisis « Écran virtuel »</b><span>Dans Diffusion, en bas à gauche de SceneCue. Il s'allume à la résolution de ton écran, dans un coin où ta souris ne va pas.</span></li>
+        <li><b>Partage-le dans Discord</b><span>En entier : sa vignette montre ton jeu avec la scène par-dessus.</span></li>
+        <li><b>Pas de troisième écran qui traîne</b><span>SceneCue l'éteint quand tu changes de réglage ou que tu le quittes.</span></li>
+      </ol>
+    </div>
+    <aside class="callout">
+      <p class="label">Et le son ?</p>
+      <p data-i18n>Discord partage un <b>écran entier</b> : le son du jeu et de Spotify passe avec, comme d'habitude.</p>
+      <p>Pas envie d'installer un pilote ? Un deuxième vrai écran marche aussi : la copie s'y affiche en plein écran.</p>
+    </aside>
+  </section>
+
   <section class="wrap points">
     <div><b>Aucun compte</b><span>Pas d'inscription, pas de pub, pas de statistiques. Tout reste sur ton PC.</span></div>
     <div><b>Open source</b><span>Licence MIT. Lis le code, modifie-le, partage-le.</span></div>
@@ -134,7 +164,7 @@
     </details>
     <details>
       <summary>Faut-il installer quelque chose ?</summary>
-      <p data-i18n>Non : décompresse le zip où tu veux et lance <code>SceneCue.exe</code>. Tes réglages sont dans <code>%APPDATA%\SceneCue</code> ; supprime ce dossier pour repartir de zéro.</p>
+      <p data-i18n>Non : décompresse le zip où tu veux et lance <code>SceneCue.exe</code>. Tes réglages sont dans <code>%APPDATA%\SceneCue</code> ; supprime ce dossier pour repartir de zéro. Seul l'écran virtuel, en option, demande d'installer un pilote.</p>
     </details>
     <details>
       <summary>L'interface est-elle en anglais ?</summary>
@@ -142,7 +172,15 @@
     </details>
     <details>
       <summary>Mes potes ne voient pas la scène</summary>
-      <p data-i18n>Dans Discord, partage ton <b>écran entier</b>, pas une fenêtre, et vérifie que l'écran choisi est celui réglé dans <i>Sortie</i>, en bas à gauche de SceneCue.</p>
+      <p data-i18n>Dans Discord, partage ton <b>écran entier</b>, pas une fenêtre : celui réglé dans <i>Sortie</i>, en bas à gauche de SceneCue, ou l'écran choisi dans <i>Diffusion</i> si tu en as choisi un.</p>
+    </details>
+    <details>
+      <summary>La scène me cache mon écran</summary>
+      <p data-i18n>Règle <b>Diffusion</b> sur un autre écran, vrai ou virtuel : la scène s'affiche sur une copie de ton écran, et le tien reste dégagé. Voir <a href="#diffusion">Ton écran reste dégagé</a>.</p>
+    </details>
+    <details>
+      <summary>L'écran virtuel n'apparaît pas</summary>
+      <p data-i18n>Le pilote est seulement téléchargé : ouvre <b>VDD Control</b> et clique sur <i>Install Driver</i>. Dans Discord, l'écran virtuel n'existe que tant que SceneCue est ouvert avec <i>Diffusion</i> sur <i>Écran virtuel</i>.</p>
     </details>
     <details>
       <summary>Un jeu passe devant la scène</summary>

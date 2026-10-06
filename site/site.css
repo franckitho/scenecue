@@ -234,7 +234,12 @@ h1 em { font-style: normal; color: var(--accent); }
 .tags li:nth-child(3n + 1) { border-color: rgba(255, 77, 31, .45); color: var(--text); }
 
 /* ---------- iPhone ---------- */
-.iphone { display: grid; grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr); gap: 56px; align-items: start; }
+.iphone, .split { display: grid; grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr); gap: 56px; align-items: start; }
+.diffusion { padding-top: 72px; }
+.diffusion .label { margin-bottom: 18px; }
+.intro { margin: 0 0 30px; color: var(--text-2); font-size: 16.5px; }
+.intro b { color: var(--text); }
+.steps a { color: var(--accent); }
 .callout {
   padding: 26px 26px 18px;
   border: 1px solid var(--line-2);
@@ -291,7 +296,7 @@ details p { margin: 0 0 20px; color: var(--text-2); font-size: 15.5px; }
 
 /* ---------- petits écrans ---------- */
 @media (max-width: 980px) {
-  .hero, .mod, .mod--text, .iphone { grid-template-columns: minmax(0, 1fr); gap: 36px; }
+  .hero, .mod, .mod--text, .iphone, .split { grid-template-columns: minmax(0, 1fr); gap: 36px; }
   .hero { padding-top: 48px; padding-bottom: 64px; }
   .hero .shot { transform: none; }
   .mod--flip .shot { order: 0; }
