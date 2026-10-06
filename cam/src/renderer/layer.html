@@ -1,0 +1,18 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' 'unsafe-inline'; media-src 'self' blob: mediastream:">
+  <title>Caméra — calque</title>
+  <link rel="stylesheet" href="cam.css">
+  <style>
+    html, body { margin: 0; height: 100%; background: transparent; overflow: hidden; }
+    #host { position: absolute; inset: 0; }
+  </style>
+</head>
+<body>
+  <div id="host"></div>
+  <script src="cam.js"></script>
+  <script src="layer.js"></script>
+</body>
+</html>

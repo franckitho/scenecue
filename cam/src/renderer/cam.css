@@ -1,0 +1,53 @@
+/* Caméra — styles du rendu (partagés aperçu / calque à l'écran) */
+
+.cm-canvas {
+  position: relative;
+  overflow: hidden;
+  transform-origin: 0 0;
+}
+
+.cm-box {
+  position: absolute;
+  transform: translate(-50%, -50%) rotate(var(--rot, 0deg));
+  transition: opacity .25s ease;
+}
+.cm-wait .cm-box { opacity: 0; } /* rien tant que les images n'arrivent pas */
+.cm-enter, .cm-motion, .cm-frame { width: 100%; height: 100%; }
+.cm-frame {
+  box-sizing: border-box;
+  overflow: hidden;
+  opacity: var(--op, 1);
+  border: var(--bw, 0px) solid var(--bc, #fff);
+  border-radius: var(--radius, 0);
+  background: #000;
+}
+.cm-video {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  pointer-events: none;
+}
+.cm-shadow .cm-motion { filter: drop-shadow(0 18px 34px rgba(0, 0, 0, .55)) drop-shadow(0 3px 7px rgba(0, 0, 0, .35)); }
+
+/* ---------- apparition / disparition ---------- */
+.cm-hidden .cm-enter { opacity: 0; visibility: hidden; }
+.cm-out .cm-enter { animation: cm-leave .36s ease-in both; }
+@keyframes cm-leave { to { opacity: 0; scale: .94; filter: blur(8px); } }
+
+.cm-in.cm-ent-fade .cm-enter { animation: cm-in-fade .6s ease-out both; }
+@keyframes cm-in-fade { from { opacity: 0; } }
+
+.cm-in.cm-ent-pop .cm-enter { animation: cm-in-pop .7s cubic-bezier(.2, 1.55, .4, 1) both; }
+@keyframes cm-in-pop { from { opacity: 0; scale: .3; } 35% { opacity: 1; } }
+
+.cm-in.cm-ent-rise .cm-enter { animation: cm-in-rise .85s cubic-bezier(.16, 1, .3, 1) both; }
+@keyframes cm-in-rise { from { opacity: 0; translate: 0 120px; } }
+
+.cm-in.cm-ent-zoom .cm-enter { animation: cm-in-zoom .9s cubic-bezier(.2, .8, .2, 1) both; }
+@keyframes cm-in-zoom { from { opacity: 0; scale: 1.35; filter: blur(24px); } }
+
+.cm-in.cm-ent-slide .cm-enter { animation: cm-in-slide .8s cubic-bezier(.2, 1.15, .35, 1) both; }
+@keyframes cm-in-slide { from { translate: var(--slide, -2000px) 0; } }
+
+.cm-in.cm-ent-none .cm-enter { animation: none; }

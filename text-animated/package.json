@@ -1,0 +1,41 @@
+{
+  "name": "pancarte",
+  "productName": "Pancarte",
+  "version": "1.0.0",
+  "description": "Texte animé sur fond transparent, par-dessus ton écran, pour tes streams Discord.",
+  "main": "src/main.js",
+  "private": true,
+  "scripts": {
+    "start": "electron .",
+    "icon": "node scripts/make-icon.js",
+    "package": "node scripts/make-icon.js && electron-packager . Pancarte --platform=win32 --arch=x64 --out=dist --overwrite --asar --icon=assets/icon.ico --ignore=^/dist --ignore=^/scripts --app-copyright=Pancarte"
+  },
+  "dependencies": {
+    "@fontsource/abril-fatface": "^5.0.0",
+    "@fontsource/anton": "^5.0.0",
+    "@fontsource/archivo": "^5.0.0",
+    "@fontsource/bangers": "^5.0.0",
+    "@fontsource/bebas-neue": "^5.0.0",
+    "@fontsource/black-ops-one": "^5.0.0",
+    "@fontsource/bungee": "^5.0.0",
+    "@fontsource/bungee-shade": "^5.0.0",
+    "@fontsource/caveat": "^5.0.0",
+    "@fontsource/dela-gothic-one": "^5.0.0",
+    "@fontsource/fredoka": "^5.0.0",
+    "@fontsource/jetbrains-mono": "^5.0.0",
+    "@fontsource/lilita-one": "^5.0.0",
+    "@fontsource/lobster": "^5.0.0",
+    "@fontsource/monoton": "^5.0.0",
+    "@fontsource/pacifico": "^5.0.0",
+    "@fontsource/permanent-marker": "^5.0.0",
+    "@fontsource/press-start-2p": "^5.0.0",
+    "@fontsource/righteous": "^5.0.0",
+    "@fontsource/rubik-glitch": "^5.0.0",
+    "@fontsource/rubik-mono-one": "^5.0.0",
+    "@fontsource/shrikhand": "^5.0.0"
+  },
+  "devDependencies": {
+    "@electron/packager": "^20.3.0",
+    "electron": "^44.5.1"
+  }
+}

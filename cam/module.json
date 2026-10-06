@@ -1,0 +1,18 @@
+{
+  "id": "camera",
+  "name": "Caméra",
+  "description": "Webcam, carte d'acquisition, ou la caméra de ton iPhone par le Wi-Fi (page web à scanner).",
+  "en": {
+    "name": "Camera",
+    "description": "Webcam, capture card, or your iPhone's camera over Wi-Fi (scan a web page)."
+  },
+  "version": "1.0.0",
+  "icon": "assets/icon.png",
+  "panel": "src/renderer/index.html",
+  "layer": "src/renderer/layer.html",
+  "main": "src/backend/backend.js",
+  "include": [
+    "node_modules/qrcode",
+    "node_modules/dijkstrajs"
+  ]
+}

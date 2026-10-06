@@ -1,0 +1,231 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data:">
+  <title>Pancarte</title>
+  <link rel="stylesheet" href="fonts.css">
+  <link rel="stylesheet" href="render.css">
+  <link rel="stylesheet" href="app.css">
+</head>
+<body>
+
+<header class="titlebar">
+  <div class="brand">
+    <svg class="brand-mark" viewBox="0 0 20 20" aria-hidden="true">
+      <rect x="2.5" y="2.5" width="15" height="9.5" rx="1.5" transform="rotate(-5 10 7)" />
+      <rect x="9" y="11" width="2" height="7" rx=".6" class="stick" />
+      <circle cx="6.4" cy="7.4" r="1.6" class="dot" />
+    </svg>
+    <span class="brand-name">Pancarte</span>
+  </div>
+  <div class="tb-status" id="tb-status"><span class="tb-lamp"></span><span id="tb-status-text">Hors antenne</span></div>
+</header>
+
+<main class="app">
+  <section class="workspace">
+
+    <div class="stage-bar">
+      <div class="stage-left">
+        <span class="label">Aperçu</span>
+        <div class="select-wrap"><select id="display" class="select" title="Écran où la pancarte s'affiche"></select></div>
+        <span class="mono-note" id="scale-note"></span>
+      </div>
+      <div class="stage-right">
+        <div class="pad" id="pad" title="Position rapide"></div>
+        <div class="dim-ctl" title="Assombrit tout l'écran derrière le texte">
+          <span class="label">Voile</span>
+          <input type="range" min="0" max="0.9" step="0.01" data-bind="dim" class="range-mini">
+          <span class="mono-note" data-readout="dim" data-format="pct"></span>
+        </div>
+        <button class="btn" id="replay" title="Rejouer l'animation d'entrée">
+          <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8a5 5 0 1 0 1.6-3.7M3 2.5v2.8h2.8" /></svg>
+          Rejouer l'entrée
+        </button>
+      </div>
+    </div>
+
+    <div class="stage" id="stage">
+      <div class="frame" id="frame">
+        <div class="guide guide-v" id="guide-v"></div>
+        <div class="guide guide-h" id="guide-h"></div>
+      </div>
+      <div class="stage-hint">Glisse le texte pour le placer · le fond à damier sera transparent</div>
+    </div>
+
+    <div class="desk">
+      <div class="card text-card">
+        <div class="card-head">
+          <span class="label">Texte</span>
+          <span class="mono-note" id="count"></span>
+        </div>
+        <textarea id="text" class="textarea" data-bind="text" spellcheck="false" rows="2" placeholder="Écris ton message…"></textarea>
+        <div class="chips-row">
+          <span class="label">Rapide</span>
+          <div class="chips" id="chips"></div>
+        </div>
+      </div>
+
+      <div class="card extras-card">
+        <div class="card-head">
+          <span class="label">Sous-titre</span>
+          <button class="switch" data-bind="sub.on" aria-label="Afficher le sous-titre"></button>
+        </div>
+        <div class="sub-grid" data-show="sub.on=true">
+          <input type="text" class="input sub-text" data-bind="sub.text" placeholder="Une précision, une excuse…">
+          <div class="sub-row">
+            <div class="select-wrap"><select class="select" data-bind="sub.font" id="sub-font"></select></div>
+            <div class="color-field" data-bind="sub.color"></div>
+            <button class="chip-toggle" data-bind="sub.upper" title="Majuscules">AA</button>
+            <button class="chip-toggle" data-bind="sub.shadow" title="Ombre portée pour la lisibilité">Ombre</button>
+          </div>
+          <div class="ctl range" data-bind="sub.size" data-label="Taille" data-min="14" data-max="140" data-step="1"></div>
+        </div>
+
+        <div class="card-head card-head--sep">
+          <span class="label">Minuteur</span>
+          <button class="btn small" id="timer-reset" data-show="timer.mode=down,up" title="Repartir de zéro (quand la pancarte est affichée)">
+            <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8a5 5 0 1 0 1.6-3.7M3 2.5v2.8h2.8" /></svg>
+            Relancer
+          </button>
+        </div>
+        <div class="seg" data-bind="timer.mode" data-options="off:Aucun,down:Compte à rebours,up:Chrono"></div>
+        <div class="timer-row" data-hide="timer.mode=off">
+          <input type="text" class="input" data-bind="timer.label" placeholder="Libellé">
+          <div class="minutes" data-show="timer.mode=down">
+            <input type="number" class="input num" data-bind="timer.minutes" min="1" max="600" step="1">
+            <span class="mono-note">min</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <aside class="inspector" id="inspector">
+
+    <section class="sec" data-sec="looks">
+      <header class="sec-head"><span class="label">Styles</span><span class="mono-note">survole pour animer</span></header>
+      <div class="sec-body">
+        <div class="looks" id="looks"></div>
+        <div class="mine-head">
+          <span class="label">Mes styles</span>
+          <button class="btn small" id="save-style">
+            <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 3v10M3 8h10" /></svg>
+            Enregistrer
+          </button>
+        </div>
+        <form class="save-row" id="save-row" hidden>
+          <input class="input" id="save-name" maxlength="24" placeholder="Nom du style" autocomplete="off">
+          <button class="btn small primary" type="submit">OK</button>
+        </form>
+        <div class="looks" id="mine"></div>
+        <p class="empty" id="mine-empty">Règle un style à ta façon puis enregistre-le ici.</p>
+      </div>
+    </section>
+
+    <section class="sec" data-sec="typo">
+      <header class="sec-head"><span class="label">Typographie</span></header>
+      <div class="sec-body">
+        <div class="fonts" id="fonts"></div>
+        <input type="text" class="input custom-font" data-bind="style.customFont" data-show="style.font=custom" placeholder="Nom exact d'une police installée">
+        <div class="ctl range" data-bind="style.size" data-label="Taille" data-min="24" data-max="420" data-step="1"></div>
+        <div class="ctl range" data-bind="style.spacing" data-label="Espacement" data-min="-20" data-max="60" data-step="1"></div>
+        <div class="ctl range" data-bind="style.lineHeight" data-label="Interligne" data-min="0.7" data-max="2" data-step="0.05"></div>
+        <div class="ctl range" data-bind="style.rotate" data-label="Inclinaison" data-min="-30" data-max="30" data-step="1" data-unit="°"></div>
+        <div class="ctl range" data-bind="style.arc" data-label="Courbure" data-min="-100" data-max="100" data-step="1"></div>
+        <div class="ctl-row">
+          <div class="seg seg--icons" data-bind="style.align" data-options="left:Gauche,center:Centre,right:Droite"></div>
+          <button class="chip-toggle" data-bind="style.upper" title="Majuscules">AA</button>
+          <button class="chip-toggle italic" data-bind="style.italic" title="Italique">I</button>
+        </div>
+      </div>
+    </section>
+
+    <section class="sec" data-sec="fill">
+      <header class="sec-head"><span class="label">Remplissage</span></header>
+      <div class="sec-body">
+        <div class="seg" data-bind="style.fill.type" data-options="solid:Uni,gradient:Dégradé,chrome:Chrome,gold:Or,rainbow:Arc-en-ciel"></div>
+        <div class="colors-row">
+          <div class="color-field" data-bind="style.fill.c1" data-label="1" data-show="style.fill.type=solid,gradient"></div>
+          <div class="color-field" data-bind="style.fill.c2" data-label="2" data-show="style.fill.type=gradient"></div>
+          <div class="color-field" data-bind="style.fill.c3" data-label="3" data-none data-show="style.fill.type=gradient"></div>
+        </div>
+        <div class="ctl range" data-bind="style.fill.angle" data-label="Angle" data-min="0" data-max="360" data-step="5" data-unit="°" data-hide="style.fill.type=solid"></div>
+        <div class="ctl-row toggles">
+          <button class="chip-toggle wide" data-bind="style.shine">Reflet qui passe</button>
+          <button class="chip-toggle wide" data-bind="style.hue">Couleurs qui tournent</button>
+        </div>
+      </div>
+    </section>
+
+    <section class="sec" data-sec="stroke">
+      <header class="sec-head"><span class="label">Contour</span><button class="switch" data-bind="style.stroke.on" aria-label="Contour"></button></header>
+      <div class="sec-body" data-show="style.stroke.on=true">
+        <div class="ctl range" data-bind="style.stroke.width" data-label="Épaisseur" data-min="1" data-max="30" data-step="1"></div>
+        <div class="ctl"><span class="ctl-label">Couleur</span><div class="color-field" data-bind="style.stroke.color"></div></div>
+      </div>
+    </section>
+
+    <section class="sec" data-sec="shadow">
+      <header class="sec-head"><span class="label">Ombre & relief</span></header>
+      <div class="sec-body">
+        <div class="seg" data-bind="style.shadow.type" data-options="none:Aucune,soft:Douce,hard:Dure,extrude:Relief 3D,glow:Lueur"></div>
+        <div data-hide="style.shadow.type=none" class="stack">
+          <div class="ctl"><span class="ctl-label">Couleur</span><div class="color-field" data-bind="style.shadow.color"></div></div>
+          <div class="ctl range" data-bind="style.shadow.opacity" data-label="Opacité" data-min="0" data-max="1" data-step="0.05" data-format="pct"></div>
+          <div class="ctl range" data-bind="style.shadow.dist" data-label="Profondeur" data-min="0" data-max="60" data-step="1" data-hide="style.shadow.type=glow"></div>
+          <div class="ctl range" data-bind="style.shadow.angle" data-label="Direction" data-min="0" data-max="360" data-step="5" data-unit="°" data-hide="style.shadow.type=glow"></div>
+          <div class="ctl range" data-bind="style.shadow.blur" data-label="Flou" data-min="0" data-max="120" data-step="1" data-show="style.shadow.type=soft,glow"></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="sec" data-sec="anim">
+      <header class="sec-head"><span class="label">Animation</span></header>
+      <div class="sec-body">
+        <div class="grid-pick" data-bind="style.anim" data-options="none:Aucune,float:Flotter,pulse:Pulsation,swing:Balancier,wave:Vague,bounce:Rebond,jelly:Gélatine,shake:Tremblement,spin:Toupie,flicker:Néon,glitch:Glitch,type:Machine à écrire,marquee:Défilement"></div>
+        <div data-hide="style.anim=none" class="stack">
+          <div class="ctl range" data-bind="style.speed" data-label="Vitesse" data-min="0.2" data-max="3" data-step="0.05" data-format="x"></div>
+          <div class="ctl range" data-bind="style.amp" data-label="Amplitude" data-min="0" data-max="3" data-step="0.05" data-format="x" data-hide="style.anim=marquee,type"></div>
+        </div>
+        <div class="sub-label"><span class="label">Entrée</span></div>
+        <div class="grid-pick grid-pick--3" data-bind="style.entrance" data-options="none:Directe,fade:Fondu,pop:Pop,rise:Montée,focus:Mise au point,letters:Lettre à lettre"></div>
+      </div>
+    </section>
+
+  </aside>
+</main>
+
+<footer class="transport">
+  <button class="onair" id="onair">
+    <span class="lamp"></span>
+    <span class="onair-text">
+      <b id="onair-title">Afficher la pancarte</b>
+      <small id="onair-sub">Hors antenne</small>
+    </span>
+  </button>
+  <div class="hotkey" id="hotkey">
+    <kbd>Ctrl</kbd><kbd>Alt</kbd><kbd>B</kbd>
+    <span>affiche / masque depuis n'importe où</span>
+  </div>
+  <p class="tip" data-i18n>Dans Discord, partage <b>l'écran entier</b>. En partage de fenêtre, la pancarte n'apparaît pas.</p>
+</footer>
+
+<div class="pop" id="pop" hidden>
+  <div class="pop-swatches" id="pop-swatches"></div>
+  <div class="pop-row">
+    <span class="pop-preview" id="pop-preview"></span>
+    <input class="input mono" id="pop-hex" maxlength="7" spellcheck="false" autocomplete="off">
+    <label class="btn small pop-more" title="Sélecteur Windows">
+      Autre…
+      <input type="color" id="pop-native">
+    </label>
+  </div>
+</div>
+
+<script src="i18n.js"></script>
+<script src="en.js"></script>
+<script src="render.js"></script>
+<script src="app.js"></script>
+</body>
+</html>

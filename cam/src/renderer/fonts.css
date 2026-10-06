@@ -1,0 +1,8 @@
+/* Polices de l'interface, embarquées par Régie (ce module ne tourne que dans Régie) */
+@import url('../../../node_modules/@fontsource/archivo/400.css');
+@import url('../../../node_modules/@fontsource/archivo/500.css');
+@import url('../../../node_modules/@fontsource/archivo/600.css');
+@import url('../../../node_modules/@fontsource/archivo/700.css');
+@import url('../../../node_modules/@fontsource/archivo/800.css');
+@import url('../../../node_modules/@fontsource/jetbrains-mono/400.css');
+@import url('../../../node_modules/@fontsource/jetbrains-mono/500.css');

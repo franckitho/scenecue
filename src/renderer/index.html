@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; frame-src 'self'">
+  <title>Régie</title>
+  <link rel="stylesheet" href="fonts.css">
+  <link rel="stylesheet" href="regie.css">
+</head>
+<body>
+
+<header class="titlebar">
+  <div class="brand">
+    <svg class="brand-mark" viewBox="0 0 20 20" aria-hidden="true">
+      <rect x="6" y="2.5" width="11.5" height="8" rx="1.4" class="l3" />
+      <rect x="4.2" y="5.2" width="11.5" height="8" rx="1.4" class="l2" />
+      <rect x="2.5" y="8" width="11.5" height="8" rx="1.4" class="l1" />
+      <circle cx="5.6" cy="12" r="1.5" class="dot" />
+    </svg>
+    <span class="brand-name">Régie</span>
+  </div>
+  <div class="tb-status"><span class="tb-lamp"></span><span id="tb-status-text">Hors antenne</span></div>
+  <div class="lang" id="lang" title="Langue de l'interface" data-no-i18n><button data-v="fr">FR</button><button data-v="en">EN</button></div>
+</header>
+
+<main class="app">
+  <aside class="side">
+    <div class="monitor-block">
+      <div class="side-head">
+        <span class="label" id="monitor-label">Aperçu</span>
+        <span class="mono-note" id="monitor-meta"></span>
+      </div>
+      <div class="monitor" id="monitor">
+        <iframe class="monitor-frame" id="monitor-frame" tabindex="-1"></iframe>
+        <span class="monitor-empty" id="monitor-empty">Scène vide</span>
+      </div>
+    </div>
+
+    <section class="side-sec">
+      <header class="side-head">
+        <span class="label">Scènes</span>
+        <button class="icon-btn" id="add-scene" title="Nouvelle scène">
+          <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 3v10M3 8h10" /></svg>
+        </button>
+      </header>
+      <ol class="list" id="scenes"></ol>
+    </section>
+
+    <section class="side-sec side-sec--grow">
+      <header class="side-head">
+        <span class="label">Calques</span>
+        <button class="icon-btn" id="add-layer" title="Ajouter un module à la scène">
+          <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 3v10M3 8h10" /></svg>
+        </button>
+      </header>
+      <ol class="list" id="layers"></ol>
+      <p class="side-note" id="layers-note">Le calque du haut passe devant les autres.</p>
+    </section>
+
+    <footer class="side-foot">
+      <span class="label">Sortie</span>
+      <div class="select-wrap"><select id="display" class="select" title="Écran où les scènes s'affichent"></select></div>
+    </footer>
+  </aside>
+
+  <section class="editor" id="editor">
+    <iframe class="panel" id="panel" hidden></iframe>
+    <div class="empty" id="empty" hidden>
+      <div class="empty-inner">
+        <p class="label">Scène vide</p>
+        <h1 class="empty-title" id="empty-title">Ajoute un premier module</h1>
+        <p class="empty-text">Chaque module devient un calque de la scène. Tu peux en empiler plusieurs.</p>
+        <div class="catalog" id="catalog"></div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="transport">
+  <button class="onair" id="onair">
+    <span class="lamp"></span>
+    <span class="onair-text">
+      <b id="onair-title">Mettre à l'écran</b>
+      <small id="onair-sub">Hors antenne</small>
+    </span>
+  </button>
+  <button class="btn cut" id="cut" hidden>Couper</button>
+  <div class="hotkeys" id="hotkeys">
+    <span class="hk"><kbd>Ctrl</kbd><kbd>Alt</kbd><kbd>B</kbd><span>afficher / couper</span></span>
+    <span class="hk" id="hk-scenes"><kbd>Ctrl</kbd><kbd>Alt</kbd><kbd>1</kbd><span class="hk-dash">–</span><kbd>9</kbd><span>scène n°</span></span>
+  </div>
+  <p class="tip" data-i18n>Dans Discord, partage <b>l'écran entier</b>.</p>
+</footer>
+
+<div class="menu" id="module-menu" hidden></div>
+
+<script src="i18n.js"></script>
+<script src="en.js"></script>
+<script src="regie.js"></script>
+</body>
+</html>

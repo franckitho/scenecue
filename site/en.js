@@ -1,0 +1,104 @@
+// Site en anglais : texte français (index.html, site.js) → anglais.
+I18N.add({
+  // en-tête
+  'Comment ça marche': 'How it works',
+  'Modules': 'Modules',
+  'iPhone': 'iPhone',
+  'Questions': 'FAQ',
+  'GitHub': 'GitHub',
+
+  // accroche
+  'Pour streamer sur Discord': 'For streaming on Discord',
+  'Ta régie de stream, <em>par-dessus</em> ton écran.': 'Your stream control room, <em>on top</em> of your screen.',
+  "Texte animé, images, GIF, vidéos et caméra (même celle de ton iPhone), sur fond transparent, à l'écran d'un clic ou d'un raccourci. Tes potes les voient dans ton partage d'écran, et toi tu continues à utiliser ton PC.": "Animated text, images, GIFs, videos and camera (even your iPhone's), on a transparent background, on screen in one click or shortcut. Your friends see them in your screen share, and you keep using your PC.",
+  'Télécharger pour Windows': 'Download for Windows',
+  'Windows 10 et 11 · gratuit': 'Windows 10 and 11 · free',
+  'Windows 10 et 11': 'Windows 10 and 11',
+  'Code source': 'Source code',
+  'Gratuit, open source (licence MIT), sans compte ni publicité.': 'Free, open source (MIT license), no account, no ads.',
+  'Régie : la scène « Je reviens vite » en texte animé, avec la galerie de styles': 'Régie: the “Be right back” scene in animated text, with the style gallery',
+
+  // comment ça marche
+  'Prépare tes scènes': 'Prepare your scenes',
+  '« BRB », « Sous la douche », « À table »… Chaque scène empile des calques : texte, image, vidéo, caméra.': '“BRB”, “In the shower”, “Eating”… Each scene stacks layers: text, image, video, camera.',
+  "Mets-en une à l'écran": 'Put one on screen',
+  "D'un clic, ou avec <kbd>Ctrl</kbd><kbd>Alt</kbd><kbd>B</kbd> depuis n'importe quelle app. <kbd>Ctrl</kbd><kbd>Alt</kbd><kbd>1</kbd>…<kbd>9</kbd> appelle une scène par son numéro.": 'In one click, or with <kbd>Ctrl</kbd><kbd>Alt</kbd><kbd>B</kbd> from any app. <kbd>Ctrl</kbd><kbd>Alt</kbd><kbd>1</kbd>…<kbd>9</kbd> calls a scene by its number.',
+  'Partage ton écran entier': 'Share your entire screen',
+  "Dans Discord. La scène s'affiche par-dessus tout, sur fond transparent, et tes clics passent au travers.": 'In Discord. The scene shows on top of everything, on a transparent background, and your clicks go through it.',
+
+  // modules
+  'Texte animé': 'Animated text',
+  'Façon WordArt, en mieux.': 'Like WordArt, only better.',
+  "Douze styles prêts à l'emploi (néon, chrome, arcade, bédé…), une trentaine de polices, des dégradés, du relief 3D, une courbure, des animations et un minuteur ou un compte à rebours. Un voile peut aussi assombrir tout l'écran derrière le texte.": 'Twelve ready-made styles (neon, chrome, arcade, comic…), about thirty fonts, gradients, 3D extrusion, curves, animations and a timer or countdown. A dim layer can also darken the whole screen behind the text.',
+  'Vague': 'Wave',
+  'Rebond': 'Bounce',
+  'Néon': 'Neon',
+  'Glitch': 'Glitch',
+  'Machine à écrire': 'Typewriter',
+  'Défilement': 'Marquee',
+  'Compte à rebours': 'Countdown',
+  'Chrono': 'Stopwatch',
+  'Image / vidéo': 'Image / video',
+  'Une fois, en boucle, ou en boomerang.': 'Once, looped, or boomerang.',
+  "Glisse un PNG, un GIF, un WebP ou une vidéo MP4, WebM ou MOV. Tu règles la vitesse, le nombre de passages, la pause entre deux passages et la fin (figer ou disparaître), tu découpes l'extrait et tu choisis si le son sort.": 'Drop a PNG, GIF, WebP or an MP4, WebM or MOV video. Set the speed, the number of repeats, the pause between plays and the ending (freeze or disappear), trim the clip and choose whether the sound plays.',
+  'Les fichiers vont dans une bibliothèque, réutilisable dans toutes tes scènes.': 'Files go into a library, reusable in all your scenes.',
+  'Le module Image / vidéo : une vidéo découpée, lue en boucle avec le son': 'The Image / video module: a trimmed video, looped with sound',
+  'Caméra': 'Camera',
+  'Ta webcam… ou ton iPhone.': 'Your webcam… or your iPhone.',
+  "Une webcam, une carte d'acquisition ou ton <b>iPhone par le Wi-Fi</b>, sans rien installer dessus. Tu peux mettre l'image dans un cercle ou un cadre arrondi, ajouter une bordure, zoomer et recadrer.": 'A webcam, a capture card or your <b>iPhone over Wi-Fi</b>, with nothing to install on it. Put the picture in a circle or a rounded frame, add a border, zoom and crop.',
+  "Le module Caméra : l'iPhone connecté par le Wi-Fi, avec le QR code à scanner": 'The Camera module: the iPhone connected over Wi-Fi, with the QR code to scan',
+
+  // iPhone
+  "La caméra de l'iPhone, en quatre étapes": "The iPhone's camera, in four steps",
+  'Même Wi-Fi': 'Same Wi-Fi',
+  "L'iPhone et le PC sur le même réseau.": 'The iPhone and the PC on the same network.',
+  'Scanne le QR code': 'Scan the QR code',
+  "Affiché par Régie, avec l'appareil photo de l'iPhone.": "Shown by Régie, with the iPhone's Camera app.",
+  "Accepte l'avertissement": 'Accept the warning',
+  '« Connexion non privée » : <i>Afficher les détails › visiter ce site web</i>. Régie crée son propre certificat.': '“Connection not private”: <i>Show Details › visit this website</i>. Régie creates its own certificate.',
+  'Démarrer': 'Start',
+  'Autorise la caméra. Garde Safari ouvert, écran allumé.': 'Allow the camera. Keep Safari open and the screen on.',
+  'Et ta vie privée ?': 'What about your privacy?',
+  'La vidéo va <b>directement</b> du téléphone au PC, sur ton réseau local. Elle ne passe par aucun serveur, nulle part.': 'The video goes <b>straight</b> from the phone to the PC, over your local network. It goes through no server, anywhere.',
+  "L'adresse contient un code secret : un autre appareil du réseau ne peut pas envoyer sa vidéo dans ton stream.": "The address contains a secret code: another device on the network can't send its video into your stream.",
+
+  // points forts
+  'Aucun compte': 'No account',
+  "Pas d'inscription, pas de pub, pas de statistiques. Tout reste sur ton PC.": 'No sign-up, no ads, no analytics. Everything stays on your PC.',
+  'Open source': 'Open source',
+  'Licence MIT. Lis le code, modifie-le, partage-le.': 'MIT license. Read the code, change it, share it.',
+  'Extensible': 'Extensible',
+  'Chaque type de calque est un module : une page HTML et un <code>module.json</code>.': 'Each kind of layer is a module: an HTML page and a <code>module.json</code>.',
+  'Écrire un module': 'Write a module',
+
+  // questions
+  'Windows affiche « Windows a protégé votre ordinateur »': 'Windows shows “Windows protected your PC”',
+  "L'exécutable n'est pas signé (un certificat de signature coûte cher). Clique sur <i>Informations complémentaires</i>, puis <i>Exécuter quand même</i>. Tu peux aussi construire Régie toi-même à partir du code source.": "The executable isn't signed (a code signing certificate is expensive). Click <i>More info</i>, then <i>Run anyway</i>. You can also build Régie yourself from the source code.",
+  'Faut-il installer quelque chose ?': 'Do I need to install anything?',
+  'Non : décompresse le zip où tu veux et lance <code>Regie.exe</code>. Tes réglages sont dans <code>%APPDATA%\\Regie</code> ; supprime ce dossier pour repartir de zéro.': 'No: unzip it anywhere and run <code>Regie.exe</code>. Your settings live in <code>%APPDATA%\\Regie</code>; delete that folder to start from scratch.',
+  "L'interface est-elle en anglais ?": 'Is the interface in English?',
+  'Oui : Régie suit la langue de Windows (français ou anglais), et le sélecteur <b>FR | EN</b> en haut de la fenêtre change la langue à tout moment.': 'Yes: Régie follows the Windows language (French or English), and the <b>FR | EN</b> switch at the top of the window changes it at any time.',
+  'Mes potes ne voient pas la scène': "My friends can't see the scene",
+  "Dans Discord, partage ton <b>écran entier</b>, pas une fenêtre, et vérifie que l'écran choisi est celui réglé dans <i>Sortie</i>, en bas à gauche de Régie.": 'In Discord, share your <b>entire screen</b>, not a window, and check that it is the screen set in <i>Output</i>, at the bottom left of Régie.',
+  'Un jeu passe devant la scène': 'A game covers the scene',
+  'Les jeux en plein écran exclusif passent devant tout. Mets le jeu en mode <b>fenêtré sans bordure</b>.': 'Games in exclusive fullscreen cover everything. Switch the game to <b>borderless windowed</b> mode.',
+  'Ça marche avec OBS, Twitch, YouTube ?': 'Does it work with OBS, Twitch, YouTube?',
+  "Régie est pensée pour le partage d'écran de Discord, mais la scène est une vraie fenêtre par-dessus ton bureau : tout logiciel qui capture l'écran entier la voit, OBS compris.": "Régie is designed for Discord's screen share, but the scene is a real window on top of your desktop: any software that captures the entire screen sees it, OBS included.",
+  'Et sur Mac ou Linux ?': 'What about Mac or Linux?',
+  'Windows uniquement pour l\'instant. Les contributions sont bienvenues !': 'Windows only for now. Contributions are welcome!',
+
+  // fin de page
+  'Prêt pour ton prochain BRB ?': 'Ready for your next BRB?',
+  'Régie · licence <a data-link="license" href="#">MIT</a>': 'Régie · <a data-link="license" href="#">MIT</a> license',
+  'Toutes les versions': 'All releases',
+  'Signaler un problème': 'Report an issue',
+  "Régie n'est pas affiliée à Discord.": 'Régie is not affiliated with Discord.',
+
+  // site.js
+  "Aperçu local : les liens s'activent une fois le site publié sur GitHub Pages.": 'Local preview: links turn on once the site is published on GitHub Pages.',
+  '{n} Mo': '{n} MB',
+  'notes de version': 'release notes',
+  'Version publiée le {date}': 'Released on {date}',
+  'gratuit, open source (MIT).': 'free, open source (MIT).',
+  'Première version bientôt disponible': 'First release coming soon',
+});

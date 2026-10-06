@@ -1,0 +1,168 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data: blob:; media-src 'self' blob:; frame-src 'self'">
+  <title>Média</title>
+  <link rel="stylesheet" href="fonts.css">
+  <link rel="stylesheet" href="media.css">
+  <link rel="stylesheet" href="app.css">
+</head>
+<body>
+
+<main class="app">
+  <section class="workspace">
+
+    <div class="stage-bar">
+      <div class="stage-left">
+        <span class="label">Aperçu</span>
+        <span class="mono-note" id="scale-note"></span>
+        <span class="clock" id="clock" data-when="timed"></span>
+      </div>
+      <div class="stage-right">
+        <div class="pad" id="pad" title="Position rapide" data-when="free"></div>
+        <button class="btn toggle" id="listen" data-when="video" title="Entendre le son dans l'aperçu. À l'écran, le son sort si « Son » est activé.">
+          <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M2.5 6v4h2.5l3.5 3V3L5 6H2.5z" /><path class="waves" d="M11 5.5a3.5 3.5 0 0 1 0 5M12.8 3.6a6 6 0 0 1 0 8.8" /></svg>
+          Écouter
+        </button>
+        <button class="btn" id="replay" data-when="media" title="Rejouer depuis le début, avec l'animation d'entrée">
+          <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8a5 5 0 1 0 1.6-3.7M3 2.5v2.8h2.8" /></svg>
+          Rejouer
+        </button>
+      </div>
+    </div>
+
+    <div class="stage" id="stage">
+      <div class="frame" id="frame">
+        <div class="guide guide-v" id="guide-v"></div>
+        <div class="guide guide-h" id="guide-h"></div>
+      </div>
+      <div class="pick" id="pick" hidden>
+        <div class="pick-card">
+          <svg class="pick-icon" viewBox="0 0 48 48" aria-hidden="true">
+            <rect x="5" y="9" width="38" height="30" rx="4" />
+            <path d="M5 33l10-10 8 8 6-6 14 14" />
+            <circle cx="31" cy="18" r="3.5" />
+          </svg>
+          <b>Glisse une image, un GIF ou une vidéo</b>
+          <span>PNG · JPG · GIF · WebP · MP4 · WebM · MOV</span>
+          <button class="btn primary" id="pick-btn">Choisir un fichier…</button>
+        </div>
+      </div>
+      <div class="drop-veil" id="drop-veil"><span>Dépose pour importer</span></div>
+      <div class="stage-hint" id="stage-hint"></div>
+      <div class="toast" id="toast" hidden></div>
+    </div>
+
+    <div class="desk">
+      <div class="card media-card">
+        <div class="card-head">
+          <span class="label">Média</span>
+          <button class="btn small" id="replace">
+            <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 10.5V2.5M5 5.5l3-3 3 3M2.5 10v3.5h11V10" /></svg>
+            <span id="replace-text">Choisir…</span>
+          </button>
+        </div>
+        <div class="media-row">
+          <div class="thumb" id="thumb"></div>
+          <div class="media-meta">
+            <b id="media-name">Aucun média</b>
+            <span id="media-info">Importe un fichier ou choisis-en un dans la bibliothèque.</span>
+          </div>
+        </div>
+        <div class="trim" data-when="timed">
+          <div class="trim-head">
+            <span class="label">Découpe</span>
+            <span class="mono-note" id="trim-note"></span>
+            <button class="btn small" id="trim-reset" title="Lire le fichier en entier">Tout</button>
+          </div>
+          <div class="trim-track" id="trim-track">
+            <div class="trim-sel" id="trim-sel"></div>
+            <div class="trim-play" id="trim-play"></div>
+            <button class="trim-h" id="trim-a" title="Début"></button>
+            <button class="trim-h" id="trim-b" title="Fin"></button>
+          </div>
+        </div>
+      </div>
+
+      <div class="card lib-card">
+        <div class="card-head">
+          <span class="label">Bibliothèque</span>
+          <span class="mono-note" id="lib-count"></span>
+        </div>
+        <div class="lib" id="lib"></div>
+        <p class="empty" id="lib-empty">Les fichiers importés restent ici, réutilisables dans toutes tes scènes.</p>
+      </div>
+    </div>
+  </section>
+
+  <aside class="inspector" id="inspector">
+
+    <section class="sec" data-sec="play">
+      <header class="sec-head"><span class="label">Lecture</span><span class="mono-note" id="play-note"></span></header>
+      <div class="sec-body">
+        <div class="stack" data-when="timed">
+          <div class="seg" data-bind="mode" data-options="once:Une fois,loop:Boucle,bounce:Boomerang"></div>
+          <div class="ctl range" data-bind="speed" data-label="Vitesse" data-min="0.25" data-max="4" data-step="0.05" data-format="x"></div>
+          <div class="ctl range" data-bind="repeat" data-label="Passages" data-min="0" data-max="20" data-step="1" data-format="count" data-when="repeatable"></div>
+          <div class="ctl range" data-bind="gap" data-label="Pause" data-min="0" data-max="30" data-step="0.5" data-format="s" data-when="repeatable"></div>
+          <div class="ctl" data-when="finite">
+            <span class="ctl-label">À la fin</span>
+            <div class="seg" data-bind="end" data-options="hold:Figer,hide:Disparaître"></div>
+          </div>
+          <p class="hint" data-when="repeatable">Passages ∞ : sans fin. Pause : attente entre deux passages.</p>
+          <p class="hint warn" data-when="bounce-long">Le boomerang garde les images en mémoire : il est fait pour un extrait court. Réduis la découpe sous 10 s pour qu'il reste fluide.</p>
+        </div>
+        <div class="stack" data-when="still">
+          <div class="ctl range" data-bind="hold" data-label="Durée" data-min="0" data-max="120" data-step="1" data-format="s0"></div>
+          <p class="hint">∞ : l'image reste affichée. Sinon, elle disparaît après ce délai.</p>
+        </div>
+        <p class="hint" data-when="none">Choisis un média pour régler sa lecture.</p>
+      </div>
+    </section>
+
+    <section class="sec" data-sec="sound" data-when="video">
+      <header class="sec-head"><span class="label">Son</span><button class="switch" data-bind="sound" aria-label="Son"></button></header>
+      <div class="sec-body">
+        <div class="ctl range" data-bind="volume" data-label="Volume" data-min="0" data-max="1" data-step="0.01" data-format="pct" data-when="sound"></div>
+        <p class="hint warn" data-when="bounce-sound">Le boomerang est toujours muet.</p>
+        <p class="hint">Le son ne sort que de la scène à l'écran. L'aperçu reste muet, sauf avec « Écouter ».</p>
+      </div>
+    </section>
+
+    <section class="sec" data-sec="frame">
+      <header class="sec-head"><span class="label">Cadrage</span></header>
+      <div class="sec-body">
+        <div class="seg" data-bind="fit" data-options="free:Libre,contain:Ajuster,cover:Remplir" data-titles="Taille et position libres|Tout le média, aussi grand que possible|Couvre tout l'écran, quitte à rogner"></div>
+        <div class="ctl range" data-bind="size" data-label="Taille" data-min="0.03" data-max="1" data-step="0.01" data-format="pct" data-when="free"></div>
+        <div class="ctl range" data-bind="rotate" data-label="Rotation" data-min="-180" data-max="180" data-step="1" data-unit="°"></div>
+        <div class="ctl range" data-bind="opacity" data-label="Opacité" data-min="0" data-max="1" data-step="0.01" data-format="pct"></div>
+        <div class="ctl range" data-bind="radius" data-label="Coins" data-min="0" data-max="50" data-step="1" data-unit="%"></div>
+        <div class="ctl-row">
+          <button class="chip-toggle wide" data-bind="flip">Miroir</button>
+          <button class="chip-toggle wide" data-bind="shadow">Ombre portée</button>
+        </div>
+      </div>
+    </section>
+
+    <section class="sec" data-sec="anim">
+      <header class="sec-head"><span class="label">Animation</span></header>
+      <div class="sec-body">
+        <div class="sub-label"><span class="label">Entrée</span></div>
+        <div class="grid-pick" data-bind="entrance" data-options="none:Directe,fade:Fondu,pop:Pop,rise:Montée,zoom:Zoom,slide:Glissé"></div>
+        <div class="sub-label"><span class="label">Mouvement</span></div>
+        <div class="grid-pick" data-bind="motion" data-options="none:Aucun,float:Flotter,pulse:Pulsation,swing:Balancier,spin:Toupie,shake:Vibration"></div>
+      </div>
+    </section>
+
+  </aside>
+</main>
+
+<input type="file" id="file-input" accept="image/*,video/*,.mkv,.mov" hidden>
+
+<script src="i18n.js"></script>
+<script src="en.js"></script>
+<script src="media.js"></script>
+<script src="app.js"></script>
+</body>
+</html>

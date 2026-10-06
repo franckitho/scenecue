@@ -1,0 +1,74 @@
+# Construit Regie.exe sur Windows à chaque push sur main et à chaque pull request :
+# le zip est téléchargeable 14 jours depuis l'onglet Actions (section « Artifacts »).
+#
+# Publier une version : pousse une étiquette qui commence par v
+#   git tag v1.2.0
+#   git push origin v1.2.0
+# → même construction, puis une release GitHub avec Regie-win-x64.zip.
+# Le nom du fichier ne change pas d'une version à l'autre : le lien
+# https://github.com/<compte>/<dépôt>/releases/latest/download/Regie-win-x64.zip
+# télécharge toujours la dernière version (c'est celui du site).
+name: Build
+
+on:
+  push:
+    branches: [main]
+    tags: ['v*']
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: write # créer la release (les pull requests venant d'un fork restent en lecture seule)
+
+concurrency:
+  group: build-${{ github.ref }}
+  cancel-in-progress: ${{ !startsWith(github.ref, 'refs/tags/') }}
+
+jobs:
+  build:
+    name: Regie.exe
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: |
+            package-lock.json
+            cam/package-lock.json
+            text-animated/package-lock.json
+
+      # Régie complète (avec Electron), puis seulement ce que les modules embarquent :
+      # le QR code pour Caméra, les polices pour Texte animé (pas leur Electron à eux).
+      - name: Dépendances
+        run: |
+          npm ci
+          npm ci --omit=dev --prefix cam
+          npm ci --omit=dev --prefix text-animated
+
+      - name: Syntaxe
+        run: npm run check
+
+      - name: Numéro de version (étiquette v1.2.0 → 1.2.0)
+        if: startsWith(github.ref, 'refs/tags/v')
+        run: npm pkg set "version=$('${{ github.ref_name }}'.Substring(1))"
+
+      - name: Construction
+        run: npm run package
+
+      - name: Zip
+        run: Compress-Archive -Path dist/Regie-win32-x64 -DestinationPath Regie-win-x64.zip
+
+      - uses: actions/upload-artifact@v7
+        with:
+          path: Regie-win-x64.zip
+          archive: false # le zip tel quel, pas un zip dans un zip
+          retention-days: 14
+
+      - name: Release
+        if: startsWith(github.ref, 'refs/tags/v')
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh release create "${{ github.ref_name }}" Regie-win-x64.zip --title "Régie ${{ github.ref_name }}" --generate-notes

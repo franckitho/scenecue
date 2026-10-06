@@ -1,0 +1,147 @@
+/* Régie · Caméra — page ouverte sur le téléphone */
+:root {
+  --bg: #0E0D0C;
+  --panel: #161514;
+  --panel-2: #1C1A18;
+  --line: #2A2724;
+  --line-2: #3A3530;
+  --text: #EEE8E0;
+  --text-2: #BDB4A8;
+  --muted: #8C847A;
+  --accent: #FF4D1F;
+  --ok: #3EE07A;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+html, body { margin: 0; background: var(--bg); color: var(--text); }
+body {
+  min-height: 100vh;
+  min-height: 100dvh;
+  font: 500 15px/1.4 -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+  -webkit-font-smoothing: antialiased;
+}
+button { font: inherit; color: inherit; }
+[hidden] { display: none !important; }
+
+.top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--line);
+}
+.brand { display: flex; align-items: center; gap: 10px; font-weight: 800; letter-spacing: .02em; }
+.brand img { width: 26px; height: 26px; border-radius: 7px; }
+.pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 5px 10px;
+  border: 1px solid var(--line-2);
+  border-radius: 99px;
+  color: var(--muted);
+  font-size: 12.5px;
+  white-space: nowrap;
+}
+.pill i { width: 8px; height: 8px; border-radius: 50%; background: var(--line-2); }
+.pill.wait i { background: #D9A55B; }
+.pill.on { color: var(--text); border-color: rgba(255, 77, 31, .6); }
+.pill.on i { background: var(--accent); box-shadow: 0 0 8px var(--accent); animation: lamp 1.6s ease-in-out infinite; }
+@keyframes lamp { 50% { opacity: .45; } }
+
+main { display: grid; gap: 14px; padding: 16px; max-width: 560px; margin: 0 auto; }
+
+.view {
+  position: relative;
+  aspect-ratio: 3 / 4;
+  max-height: 58vh;
+  width: 100%;
+  border-radius: 14px;
+  overflow: hidden;
+  background: #161412;
+  border: 1px solid var(--line);
+}
+.view video { width: 100%; height: 100%; object-fit: contain; display: block; background: #000; }
+.view video.mirror { transform: scaleX(-1); }
+.view-empty {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-content: center;
+  justify-items: center;
+  gap: 10px;
+  color: var(--muted);
+  font-size: 14px;
+}
+.view-empty svg { width: 44px; height: 44px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linejoin: round; }
+.badge {
+  position: absolute;
+  left: 10px; bottom: 10px;
+  padding: 4px 8px;
+  border-radius: 6px;
+  background: rgba(14, 13, 12, .78);
+  color: var(--text-2);
+  font: 600 12px ui-monospace, Menlo, monospace;
+}
+
+.msg {
+  margin: 0;
+  padding: 11px 13px;
+  border-radius: 10px;
+  background: #2A130C;
+  border: 1px solid #6B2A18;
+  color: #FFD9CC;
+  font-size: 14px;
+}
+.msg.info { background: var(--panel); border-color: var(--line-2); color: var(--text-2); }
+
+.key { display: grid; gap: 6px; }
+.key label { color: var(--muted); font-size: 13px; }
+.key input {
+  height: 46px;
+  padding: 0 14px;
+  border: 1px solid var(--line-2);
+  border-radius: 10px;
+  background: var(--panel);
+  color: var(--text);
+  font: 600 18px ui-monospace, Menlo, monospace;
+  letter-spacing: .12em;
+}
+
+.go {
+  height: 56px;
+  border: 0;
+  border-radius: 14px;
+  background: var(--text);
+  color: var(--bg);
+  font-weight: 800;
+  font-size: 17px;
+}
+.go:active { transform: translateY(1px); }
+.go.stop { background: var(--panel-2); color: var(--text); border: 1px solid var(--line-2); }
+.go:disabled { opacity: .5; }
+
+.ctl { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.seg {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: 1fr;
+  gap: 3px;
+  padding: 3px;
+  border: 1px solid var(--line-2);
+  border-radius: 11px;
+  background: var(--panel);
+}
+.seg button {
+  height: 40px;
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--muted);
+  font-weight: 700;
+}
+.seg button.on { background: var(--text); color: var(--bg); }
+
+.tips { margin: 4px 0 0; padding: 0 0 0 18px; color: var(--muted); font-size: 13px; display: grid; gap: 6px; }

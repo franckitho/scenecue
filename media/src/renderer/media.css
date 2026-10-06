@@ -1,0 +1,72 @@
+/* Média — styles du rendu (partagés aperçu / calque à l'écran) */
+
+.md-canvas {
+  position: relative;
+  overflow: hidden;
+  transform-origin: 0 0;
+}
+
+.md-box {
+  position: absolute;
+  transform: translate(-50%, -50%) rotate(var(--rot, 0deg));
+}
+.md-enter, .md-motion, .md-frame { width: 100%; height: 100%; }
+.md-frame {
+  overflow: hidden;
+  opacity: var(--op, 1);
+  border-radius: var(--radius, 0);
+}
+.md-media {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: fill;
+  pointer-events: none;
+}
+.md-flip .md-media { transform: scaleX(-1); }
+.md-shadow .md-motion { filter: drop-shadow(0 18px 34px rgba(0, 0, 0, .55)) drop-shadow(0 3px 7px rgba(0, 0, 0, .35)); }
+
+/* ---------- mouvement continu ---------- */
+.md-mo-float .md-motion { animation: md-float 3.6s ease-in-out infinite; }
+@keyframes md-float {
+  0%, 100% { translate: 0 -14px; rotate: -.7deg; }
+  50% { translate: 0 14px; rotate: .7deg; }
+}
+.md-mo-pulse .md-motion { animation: md-pulse 1.8s ease-in-out infinite; }
+@keyframes md-pulse { 50% { scale: 1.06; } }
+.md-mo-swing .md-motion { animation: md-swing 3s ease-in-out infinite; }
+@keyframes md-swing {
+  0%, 100% { rotate: -4deg; }
+  50% { rotate: 4deg; }
+}
+.md-mo-spin .md-motion { animation: md-spin 9s linear infinite; }
+@keyframes md-spin { to { rotate: 360deg; } }
+.md-mo-shake .md-motion { animation: md-shake .36s linear infinite; }
+@keyframes md-shake {
+  0%, 100% { translate: 0 0; rotate: 0deg; }
+  25% { translate: 4px -3px; rotate: 1deg; }
+  50% { translate: -4px 2px; rotate: -1.2deg; }
+  75% { translate: 3px 3px; rotate: .5deg; }
+}
+
+/* ---------- apparition / disparition ---------- */
+.md-hidden .md-enter { opacity: 0; visibility: hidden; }
+.md-out .md-enter { animation: md-leave .36s ease-in both; }
+@keyframes md-leave { to { opacity: 0; scale: .94; filter: blur(8px); } }
+
+.md-in.md-ent-fade .md-enter { animation: md-in-fade .6s ease-out both; }
+@keyframes md-in-fade { from { opacity: 0; } }
+
+.md-in.md-ent-pop .md-enter { animation: md-in-pop .7s cubic-bezier(.2, 1.55, .4, 1) both; }
+@keyframes md-in-pop { from { opacity: 0; scale: .3; } 35% { opacity: 1; } }
+
+.md-in.md-ent-rise .md-enter { animation: md-in-rise .85s cubic-bezier(.16, 1, .3, 1) both; }
+@keyframes md-in-rise { from { opacity: 0; translate: 0 120px; } }
+
+.md-in.md-ent-zoom .md-enter { animation: md-in-zoom .9s cubic-bezier(.2, .8, .2, 1) both; }
+@keyframes md-in-zoom { from { opacity: 0; scale: 1.35; filter: blur(24px); } }
+
+.md-in.md-ent-slide .md-enter { animation: md-in-slide .8s cubic-bezier(.2, 1.15, .35, 1) both; }
+@keyframes md-in-slide { from { translate: var(--slide, -2000px) 0; } }
+
+.md-in.md-ent-none .md-enter { animation: none; }

@@ -1,0 +1,160 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data:; media-src 'self' blob: mediastream:; frame-src 'self'">
+  <title>Caméra</title>
+  <link rel="stylesheet" href="fonts.css">
+  <link rel="stylesheet" href="cam.css">
+  <link rel="stylesheet" href="app.css">
+</head>
+<body>
+
+<main class="app">
+  <section class="workspace">
+
+    <div class="stage-bar">
+      <div class="stage-left">
+        <span class="label">Aperçu</span>
+        <span class="mono-note" id="scale-note"></span>
+        <span class="chip" id="chip"><i></i><span id="chip-text"></span></span>
+      </div>
+      <div class="stage-right">
+        <div class="pad" id="pad" title="Position rapide" data-when="free"></div>
+        <button class="btn" id="replay" title="Rejouer l'animation d'entrée">
+          <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8a5 5 0 1 0 1.6-3.7M3 2.5v2.8h2.8" /></svg>
+          Rejouer l'entrée
+        </button>
+      </div>
+    </div>
+
+    <div class="stage" id="stage">
+      <div class="frame" id="frame">
+        <div class="guide guide-v" id="guide-v"></div>
+        <div class="guide guide-h" id="guide-h"></div>
+      </div>
+      <div class="wait" id="wait" hidden>
+        <div class="wait-card">
+          <svg viewBox="0 0 48 48" aria-hidden="true"><rect x="5" y="12" width="28" height="24" rx="4" /><path d="M33 21l10-6v18l-10-6" /></svg>
+          <b id="wait-title"></b>
+          <span id="wait-text"></span>
+          <button class="btn" id="retry" hidden>Réessayer</button>
+        </div>
+      </div>
+      <div class="stage-hint" id="stage-hint"></div>
+      <div class="toast" id="toast" hidden></div>
+    </div>
+
+    <div class="desk" id="desk">
+      <div class="card src-card">
+        <div class="card-head">
+          <span class="label">Source</span>
+        </div>
+        <div class="seg seg--big" data-bind="source" data-options="phone:iPhone (Wi-Fi),device:Caméra du PC"></div>
+
+        <div class="stack" data-when="device">
+          <div class="ctl">
+            <span class="ctl-label">Caméra</span>
+            <div class="row">
+              <div class="select-wrap"><select class="select" id="device"></select></div>
+              <button class="btn icon" id="refresh" title="Actualiser la liste">
+                <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M13 8a5 5 0 1 1-1.6-3.7M13 2.5v2.8h-2.8" /></svg>
+              </button>
+            </div>
+          </div>
+          <div class="ctl"><span class="ctl-label">Définition</span><div class="seg" data-bind="res" data-options="720:720p,1080:1080p,2160:4K"></div></div>
+          <div class="ctl"><span class="ctl-label">Images/s</span><div class="seg" data-bind="fps" data-options="30:30,60:60" data-number></div></div>
+          <p class="hint">Webcam, carte d'acquisition ou caméra virtuelle (Camo, Iriun…). Une autre application qui l'utilise déjà (Discord, OBS, Teams) peut la bloquer.</p>
+        </div>
+
+        <div class="stack" data-when="phone">
+          <div class="phone-state" id="phone-state"><i></i><span id="phone-text"></span></div>
+          <div class="ctl"><span class="ctl-label">Caméra</span><div class="seg" id="facing"><button data-v="user">Avant</button><button data-v="environment">Arrière</button></div></div>
+          <div class="ctl"><span class="ctl-label">Qualité</span><div class="seg" id="quality"><button data-v="720">720p</button><button data-v="1080">1080p</button></div></div>
+        </div>
+      </div>
+
+      <div class="card link-card" data-when="phone">
+        <div class="card-head">
+          <span class="label">Connexion de l'iPhone</span>
+          <span class="mono-note" id="srv-note"></span>
+        </div>
+        <div class="link">
+          <div class="qr" id="qr" title="À scanner avec l'appareil photo de l'iPhone"></div>
+          <ol class="steps">
+            <li data-i18n>iPhone sur le <b>même Wi-Fi</b> que ce PC.</li>
+            <li data-i18n>Scanne le code avec l'<b>appareil photo</b>.</li>
+            <li data-i18n>« Connexion non privée » : <b>Afficher les détails › visiter ce site web</b>.</li>
+            <li data-i18n>Touche <b>Démarrer</b> et autorise la caméra.</li>
+          </ol>
+        </div>
+        <div class="url-row">
+          <code class="url" id="url"></code>
+          <button class="btn small" id="copy">Copier</button>
+        </div>
+        <div class="url-row" id="ip-row" hidden>
+          <span class="ctl-label">Carte réseau</span>
+          <div class="select-wrap"><select class="select" id="ip"></select></div>
+        </div>
+        <p class="hint warn" id="srv-error" hidden></p>
+        <p class="hint" data-i18n>Au premier lancement, Windows demande l'accès au réseau : autorise les <b>réseaux privés</b>.</p>
+      </div>
+    </div>
+  </section>
+
+  <aside class="inspector" id="inspector">
+
+    <section class="sec" data-sec="frame">
+      <header class="sec-head"><span class="label">Cadrage</span></header>
+      <div class="sec-body">
+        <div class="seg" data-bind="fit" data-options="free:Libre,contain:Ajuster,cover:Remplir" data-titles="Taille et position libres|Toute l'image, aussi grande que possible|Couvre tout l'écran, quitte à rogner"></div>
+        <div class="ctl range" data-bind="size" data-label="Taille" data-min="0.05" data-max="1" data-step="0.01" data-format="pct" data-when="free"></div>
+        <div class="ctl range" data-bind="rotate" data-label="Rotation" data-min="-180" data-max="180" data-step="1" data-unit="°"></div>
+        <div class="ctl range" data-bind="opacity" data-label="Opacité" data-min="0" data-max="1" data-step="0.01" data-format="pct"></div>
+        <div class="ctl-row">
+          <button class="chip-toggle wide" data-bind="mirror">Miroir</button>
+          <button class="chip-toggle wide" data-bind="shadow">Ombre portée</button>
+        </div>
+      </div>
+    </section>
+
+    <section class="sec" data-sec="shape">
+      <header class="sec-head"><span class="label">Forme et recadrage</span></header>
+      <div class="sec-body">
+        <div class="seg" data-bind="shape" data-options="rect:Rectangle,round:Arrondi,circle:Cercle"></div>
+        <div class="ctl range" data-bind="radius" data-label="Coins" data-min="0" data-max="50" data-step="1" data-unit="%" data-when="round"></div>
+        <div class="seg" data-bind="aspect" data-options="source:Image,16x9:16:9,4x3:4:3,1x1:1:1,9x16:9:16" data-titles="Format de l'image reçue|Paysage|Classique|Carré|Portrait (téléphone debout)" data-when="not-circle"></div>
+        <div class="ctl range" data-bind="zoom" data-label="Zoom" data-min="1" data-max="4" data-step="0.05" data-format="x"></div>
+        <div class="ctl range" data-bind="panX" data-label="Horizontal" data-min="-1" data-max="1" data-step="0.01" data-format="signed"></div>
+        <div class="ctl range" data-bind="panY" data-label="Vertical" data-min="-1" data-max="1" data-step="0.01" data-format="signed"></div>
+        <p class="hint">Recadre en zoomant puis en déplaçant le point de visée. Double-clic sur un curseur : valeur par défaut.</p>
+      </div>
+    </section>
+
+    <section class="sec" data-sec="border">
+      <header class="sec-head"><span class="label">Bordure</span><button class="switch" data-bind="border" aria-label="Bordure"></button></header>
+      <div class="sec-body" data-when="border">
+        <div class="ctl range" data-bind="borderWidth" data-label="Épaisseur" data-min="1" data-max="40" data-step="1" data-unit=" px"></div>
+        <div class="ctl">
+          <span class="ctl-label">Couleur</span>
+          <label class="color-field"><input type="color" id="border-color"><span class="hex" id="border-hex"></span></label>
+        </div>
+      </div>
+    </section>
+
+    <section class="sec" data-sec="anim">
+      <header class="sec-head"><span class="label">Animation d'entrée</span></header>
+      <div class="sec-body">
+        <div class="grid-pick" data-bind="entrance" data-options="none:Directe,fade:Fondu,pop:Pop,rise:Montée,zoom:Zoom,slide:Glissé"></div>
+      </div>
+    </section>
+
+  </aside>
+</main>
+
+<script src="i18n.js"></script>
+<script src="en.js"></script>
+<script src="cam.js"></script>
+<script src="app.js"></script>
+</body>
+</html>

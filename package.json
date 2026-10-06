@@ -1,0 +1,24 @@
+{
+  "name": "regie",
+  "productName": "Regie",
+  "version": "1.0.0",
+  "description": "Régie de scènes pour stream : compose des scènes à partir de modules et affiche-les par-dessus ton écran.",
+  "main": "src/main.js",
+  "private": true,
+  "scripts": {
+    "start": "electron .",
+    "icon": "node scripts/make-icon.js",
+    "package": "node scripts/make-icon.js && node scripts/package.js",
+    "check": "node scripts/check.js",
+    "site": "node scripts/build-site.js"
+  },
+  "dependencies": {
+    "@fontsource/archivo": "^5.0.0",
+    "@fontsource/jetbrains-mono": "^5.0.0"
+  },
+  "devDependencies": {
+    "@electron/packager": "^20.3.0",
+    "electron": "^44.5.1"
+  },
+  "license": "MIT"
+}

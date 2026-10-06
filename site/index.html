@@ -1,0 +1,182 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Régie — scene control for Discord streams</title>
+  <meta name="description" content="Animated text, images, videos and camera (even your iPhone's) on top of your screen, for streaming on Discord. Free, open source, for Windows.">
+  <meta name="theme-color" content="#FF4D1F">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Régie">
+  <meta property="og:title" content="Régie — scene control for Discord streams">
+  <meta property="og:description" content="Animated text, images, videos and camera (even your iPhone's) on top of your screen. Free and open source.">
+  <meta property="og:image" content="__BASE__images/texte-anime-en.png">
+  <meta property="og:url" content="__BASE__">
+  <meta name="twitter:card" content="summary_large_image">
+  <link rel="icon" href="icon.png">
+  <link rel="apple-touch-icon" href="icon.png">
+  <link rel="stylesheet" href="site.css">
+</head>
+<body data-repo="">
+
+<header class="top">
+  <div class="wrap top-in">
+    <a class="brand" href="#" data-no-i18n><img src="icon.png" alt="" width="26" height="26"><span>Régie</span></a>
+    <nav class="nav">
+      <a href="#comment">Comment ça marche</a>
+      <a href="#modules">Modules</a>
+      <a href="#iphone">iPhone</a>
+      <a href="#questions">Questions</a>
+    </nav>
+    <div class="top-right">
+      <div class="lang" data-no-i18n><a href="?lang=fr" data-lang="fr">FR</a><a href="?lang=en" data-lang="en">EN</a></div>
+      <a class="gh" data-link="repo" href="#">
+        <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 .2a8 8 0 0 0-2.5 15.6c.4 0 .5-.2.5-.4v-1.5c-2.2.5-2.7-1-2.7-1-.4-.9-.9-1.2-.9-1.2-.7-.5.1-.5.1-.5.8.1 1.2.8 1.2.8.7 1.3 1.9.9 2.3.7.1-.5.3-.9.5-1.1-1.8-.2-3.6-.9-3.6-4 0-.9.3-1.6.8-2.1-.1-.2-.4-1 .1-2.1 0 0 .7-.2 2.2.8a7.4 7.4 0 0 1 4 0c1.5-1 2.2-.8 2.2-.8.4 1.1.2 1.9.1 2.1.5.6.8 1.3.8 2.1 0 3.1-1.9 3.7-3.6 3.9.3.3.6.8.6 1.5v2.2c0 .2.1.5.6.4A8 8 0 0 0 8 .2z" /></svg>
+        GitHub
+      </a>
+    </div>
+  </div>
+</header>
+
+<main>
+  <section class="hero wrap">
+    <div class="hero-text">
+      <p class="eyebrow"><span class="lamp"></span>Pour streamer sur Discord</p>
+      <h1 data-i18n>Ta régie de stream, <em>par-dessus</em> ton écran.</h1>
+      <p class="lead">Texte animé, images, GIF, vidéos et caméra (même celle de ton iPhone), sur fond transparent, à l'écran d'un clic ou d'un raccourci. Tes potes les voient dans ton partage d'écran, et toi tu continues à utiliser ton PC.</p>
+      <div class="cta">
+        <a class="btn-dl" data-dl href="#">
+          <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M0 2.3l6.5-.9v6.2H0zm7.3-1L16 0v7.6H7.3zM0 8.4h6.5v6.2L0 13.7zm7.3 0H16V16l-8.7-1.2z" /></svg>
+          <span><b>Télécharger pour Windows</b><small data-dl-meta>Windows 10 et 11 · gratuit</small></span>
+        </a>
+        <a class="btn-2" data-link="repo" href="#">Code source</a>
+      </div>
+      <p class="note" id="dl-note">Gratuit, open source (licence MIT), sans compte ni publicité.</p>
+    </div>
+    <figure class="shot">
+      <img src="images/texte-anime.png" data-src-en="images/texte-anime-en.png" alt="Régie : la scène « Je reviens vite » en texte animé, avec la galerie de styles" width="1480" height="900">
+    </figure>
+  </section>
+
+  <section class="band" id="comment">
+    <div class="wrap">
+      <h2 class="label">Comment ça marche</h2>
+      <ol class="steps">
+        <li><b>Prépare tes scènes</b><span>« BRB », « Sous la douche », « À table »… Chaque scène empile des calques : texte, image, vidéo, caméra.</span></li>
+        <li><b>Mets-en une à l'écran</b><span data-i18n>D'un clic, ou avec <kbd>Ctrl</kbd><kbd>Alt</kbd><kbd>B</kbd> depuis n'importe quelle app. <kbd>Ctrl</kbd><kbd>Alt</kbd><kbd>1</kbd>…<kbd>9</kbd> appelle une scène par son numéro.</span></li>
+        <li><b>Partage ton écran entier</b><span>Dans Discord. La scène s'affiche par-dessus tout, sur fond transparent, et tes clics passent au travers.</span></li>
+      </ol>
+    </div>
+  </section>
+
+  <section class="wrap modules" id="modules">
+    <article class="mod mod--text">
+      <div class="mod-text">
+        <h2 class="label">Texte animé</h2>
+        <h3>Façon WordArt, en mieux.</h3>
+        <p>Douze styles prêts à l'emploi (néon, chrome, arcade, bédé…), une trentaine de polices, des dégradés, du relief 3D, une courbure, des animations et un minuteur ou un compte à rebours. Un voile peut aussi assombrir tout l'écran derrière le texte.</p>
+      </div>
+      <ul class="tags">
+        <li>Vague</li><li>Rebond</li><li>Néon</li><li>Glitch</li><li>Machine à écrire</li><li>Défilement</li><li>Compte à rebours</li><li>Chrono</li>
+      </ul>
+    </article>
+
+    <article class="mod">
+      <figure class="shot"><img src="images/image-video.png" alt="Le module Image / vidéo : une vidéo découpée, lue en boucle avec le son" width="1480" height="900" loading="lazy"></figure>
+      <div class="mod-text">
+        <h2 class="label">Image / vidéo</h2>
+        <h3>Une fois, en boucle, ou en boomerang.</h3>
+        <p>Glisse un PNG, un GIF, un WebP ou une vidéo MP4, WebM ou MOV. Tu règles la vitesse, le nombre de passages, la pause entre deux passages et la fin (figer ou disparaître), tu découpes l'extrait et tu choisis si le son sort.</p>
+        <p>Les fichiers vont dans une bibliothèque, réutilisable dans toutes tes scènes.</p>
+      </div>
+    </article>
+
+    <article class="mod mod--flip">
+      <figure class="shot"><img src="images/camera-iphone.png" alt="Le module Caméra : l'iPhone connecté par le Wi-Fi, avec le QR code à scanner" width="1480" height="900" loading="lazy"></figure>
+      <div class="mod-text">
+        <h2 class="label">Caméra</h2>
+        <h3>Ta webcam… ou ton iPhone.</h3>
+        <p data-i18n>Une webcam, une carte d'acquisition ou ton <b>iPhone par le Wi-Fi</b>, sans rien installer dessus. Tu peux mettre l'image dans un cercle ou un cadre arrondi, ajouter une bordure, zoomer et recadrer.</p>
+      </div>
+    </article>
+  </section>
+
+  <section class="band" id="iphone">
+    <div class="wrap iphone">
+      <div>
+        <h2 class="label">La caméra de l'iPhone, en quatre étapes</h2>
+        <ol class="steps steps--compact">
+          <li><b>Même Wi-Fi</b><span>L'iPhone et le PC sur le même réseau.</span></li>
+          <li><b>Scanne le QR code</b><span>Affiché par Régie, avec l'appareil photo de l'iPhone.</span></li>
+          <li><b>Accepte l'avertissement</b><span data-i18n>« Connexion non privée » : <i>Afficher les détails › visiter ce site web</i>. Régie crée son propre certificat.</span></li>
+          <li><b>Démarrer</b><span>Autorise la caméra. Garde Safari ouvert, écran allumé.</span></li>
+        </ol>
+      </div>
+      <aside class="callout">
+        <p class="label">Et ta vie privée ?</p>
+        <p data-i18n>La vidéo va <b>directement</b> du téléphone au PC, sur ton réseau local. Elle ne passe par aucun serveur, nulle part.</p>
+        <p>L'adresse contient un code secret : un autre appareil du réseau ne peut pas envoyer sa vidéo dans ton stream.</p>
+      </aside>
+    </div>
+  </section>
+
+  <section class="wrap points">
+    <div><b>Aucun compte</b><span>Pas d'inscription, pas de pub, pas de statistiques. Tout reste sur ton PC.</span></div>
+    <div><b>Open source</b><span>Licence MIT. Lis le code, modifie-le, partage-le.</span></div>
+    <div><b>Extensible</b><span data-i18n>Chaque type de calque est un module : une page HTML et un <code>module.json</code>.</span><a class="more" data-link="modules" href="#">Écrire un module</a></div>
+  </section>
+
+  <section class="wrap faq" id="questions">
+    <h2 class="label">Questions</h2>
+    <details>
+      <summary>Windows affiche « Windows a protégé votre ordinateur »</summary>
+      <p data-i18n>L'exécutable n'est pas signé (un certificat de signature coûte cher). Clique sur <i>Informations complémentaires</i>, puis <i>Exécuter quand même</i>. Tu peux aussi construire Régie toi-même à partir du code source.</p>
+    </details>
+    <details>
+      <summary>Faut-il installer quelque chose ?</summary>
+      <p data-i18n>Non : décompresse le zip où tu veux et lance <code>Regie.exe</code>. Tes réglages sont dans <code>%APPDATA%\Regie</code> ; supprime ce dossier pour repartir de zéro.</p>
+    </details>
+    <details>
+      <summary>L'interface est-elle en anglais ?</summary>
+      <p data-i18n>Oui : Régie suit la langue de Windows (français ou anglais), et le sélecteur <b>FR | EN</b> en haut de la fenêtre change la langue à tout moment.</p>
+    </details>
+    <details>
+      <summary>Mes potes ne voient pas la scène</summary>
+      <p data-i18n>Dans Discord, partage ton <b>écran entier</b>, pas une fenêtre, et vérifie que l'écran choisi est celui réglé dans <i>Sortie</i>, en bas à gauche de Régie.</p>
+    </details>
+    <details>
+      <summary>Un jeu passe devant la scène</summary>
+      <p data-i18n>Les jeux en plein écran exclusif passent devant tout. Mets le jeu en mode <b>fenêtré sans bordure</b>.</p>
+    </details>
+    <details>
+      <summary>Ça marche avec OBS, Twitch, YouTube ?</summary>
+      <p>Régie est pensée pour le partage d'écran de Discord, mais la scène est une vraie fenêtre par-dessus ton bureau : tout logiciel qui capture l'écran entier la voit, OBS compris.</p>
+    </details>
+    <details>
+      <summary>Et sur Mac ou Linux ?</summary>
+      <p>Windows uniquement pour l'instant. Les contributions sont bienvenues !</p>
+    </details>
+  </section>
+
+  <section class="wrap end">
+    <h2>Prêt pour ton prochain BRB ?</h2>
+    <a class="btn-dl" data-dl href="#">
+      <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M0 2.3l6.5-.9v6.2H0zm7.3-1L16 0v7.6H7.3zM0 8.4h6.5v6.2L0 13.7zm7.3 0H16V16l-8.7-1.2z" /></svg>
+      <span><b>Télécharger pour Windows</b><small data-dl-meta>Windows 10 et 11 · gratuit</small></span>
+    </a>
+  </section>
+</main>
+
+<footer class="foot">
+  <div class="wrap foot-in">
+    <span data-i18n>Régie · licence <a data-link="license" href="#">MIT</a></span>
+    <span><a data-link="repo" href="#">Code source</a> · <a data-link="releases" href="#">Toutes les versions</a> · <a data-link="issues" href="#">Signaler un problème</a></span>
+    <span class="muted">Régie n'est pas affiliée à Discord.</span>
+  </div>
+</footer>
+
+<script src="i18n.js"></script>
+<script src="en.js"></script>
+<script src="site.js"></script>
+</body>
+</html>

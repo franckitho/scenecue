@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="theme-color" content="#0E0D0C">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data:; media-src 'self' blob: mediastream:">
+  <link rel="apple-touch-icon" href="/icon.png">
+  <link rel="icon" href="/icon.png">
+  <link rel="stylesheet" href="/phone.css">
+  <title>Régie · Caméra</title>
+</head>
+<body>
+  <header class="top">
+    <div class="brand"><img src="/icon.png" alt=""><span>Régie · Caméra</span></div>
+    <span class="pill" id="pill"><i></i><b id="pill-text">Prêt</b></span>
+  </header>
+
+  <main>
+    <div class="view" id="view">
+      <video id="preview" playsinline muted autoplay></video>
+      <div class="view-empty" id="view-empty">
+        <svg viewBox="0 0 48 48" aria-hidden="true"><rect x="5" y="12" width="28" height="24" rx="4" /><path d="M33 21l10-6v18l-10-6" /></svg>
+        <span>La caméra s'affichera ici</span>
+      </div>
+      <span class="badge" id="badge" hidden></span>
+    </div>
+
+    <p class="msg" id="msg" hidden></p>
+
+    <div class="key" id="key-row" hidden>
+      <label for="key">Code affiché dans Régie</label>
+      <input id="key" inputmode="text" autocomplete="off" autocapitalize="off" spellcheck="false" maxlength="16">
+    </div>
+
+    <button class="go" id="go">Démarrer la caméra</button>
+
+    <div class="ctl" id="ctl" hidden>
+      <div class="seg" id="facing">
+        <button data-v="user">Avant</button>
+        <button data-v="environment">Arrière</button>
+      </div>
+      <div class="seg" id="quality">
+        <button data-v="720">720p</button>
+        <button data-v="1080">1080p</button>
+      </div>
+    </div>
+
+    <ul class="tips">
+      <li>Garde Safari ouvert, au premier plan : iOS coupe la caméra dès que tu changes d'app ou que l'écran se verrouille.</li>
+      <li>Branche le téléphone si tu streames longtemps.</li>
+    </ul>
+  </main>
+
+  <script src="/i18n.js"></script>
+  <script src="/en.js"></script>
+  <script src="/phone.js"></script>
+</body>
+</html>

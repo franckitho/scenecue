@@ -1,0 +1,53 @@
+# Met en ligne le site du projet (dossier site/) sur GitHub Pages à chaque modification sur main.
+# À activer une fois : Settings › Pages › Build and deployment › Source : « GitHub Actions ».
+# Le bouton de téléchargement du site lit la dernière release au chargement de la page :
+# publier une version ne demande donc pas de redéployer le site.
+name: Site
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'site/**'
+      - 'docs/images/**'
+      - 'assets/icon.png'
+      - 'scripts/build-site.js'
+      - '.github/workflows/pages.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+
+      - name: Polices (sans Electron)
+        run: npm ci --omit=dev --ignore-scripts
+
+      - name: Site
+        run: npm run site # GITHUB_REPOSITORY donne le compte et le dépôt pour les liens
+
+      - uses: actions/configure-pages@v6
+
+      - uses: actions/upload-pages-artifact@v5
+        with:
+          path: _site
+
+      - id: deployment
+        uses: actions/deploy-pages@v5

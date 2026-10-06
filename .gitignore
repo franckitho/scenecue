@@ -1,0 +1,12 @@
+# dépendances (npm install) — à la racine et dans chaque module
+node_modules/
+
+# exécutables construits (npm run package) — à publier dans les Releases, pas dans le dépôt
+dist/
+out/
+
+*.log
+Thumbs.db
+desktop.ini
+.DS_Store
+_site/
