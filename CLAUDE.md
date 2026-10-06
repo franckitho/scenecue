@@ -22,12 +22,13 @@ npm run site -- --repo=franckitho/scenecue  # builds the website into _site/ (CI
 npx electron scripts/snap.js <dir>           # SceneCue scenario: PNG screenshots + console.log + scenecue.json
 npx electron scripts/snap-media.js <dir>     # Image / video module: 31 checks in results.txt + screenshots
 npx electron scripts/snap-cam.js <dir>       # Camera module: 27 checks (fake camera, simulated iPhone)
-npx electron scripts/snap-i18n.js <dir>      # English UI: 16 checks, reports any French left on screen
+npx electron scripts/snap-music.js <dir>     # Now playing module: 36 checks (simulated Spotify, then the real PowerShell once)
+npx electron scripts/snap-i18n.js <dir>      # English UI: 17 checks, reports any French left on screen
 node media/scripts/make-icon.js             # regenerates a module icon (same for cam/scripts; npm run icon for SceneCue)
 cd text-animated && npm start               # Animated text module on its own ("Pancarte")
 ```
 
-The `snap*.js` scenarios start the real app with a temporary profile (`<dir>/userdata`), make the overlay invisible and drive the UI. Individual checks can't be run alone: run the whole scenario (about 1 min; windows appear on screen). They detect the main window by URL (`includes('/src/renderer/index.html')`, the URL carries `?lang=`). `snap.js`, `snap-media.js` and `snap-cam.js` assert on French text: they force French with `--lang=fr-FR` (the app defaults to English; `snap-i18n.js` keeps `--lang=en-US` for the phone page). To test the packaged exe: `SCENECUE_MAIN="C:/…/dist/SceneCue-win32-x64/resources/app.asar/src/main.js"` (Windows path, not `/c/…`).
+The `snap*.js` scenarios start the real app with a temporary profile (`<dir>/userdata`), make the overlay invisible and drive the UI. Individual checks can't be run alone: run the whole scenario (about 1 min; windows appear on screen). They detect the main window by URL (`includes('/src/renderer/index.html')`, the URL carries `?lang=`). `snap.js`, `snap-media.js`, `snap-cam.js` and `snap-music.js` assert on French text: they force French with `--lang=fr-FR` (the app defaults to English; `snap-i18n.js` keeps `--lang=en-US` for the phone page). To test the packaged exe: `SCENECUE_MAIN="C:/…/dist/SceneCue-win32-x64/resources/app.asar/src/main.js"` (Windows path, not `/c/…`).
 
 ## Architecture
 
@@ -70,6 +71,17 @@ The end of a pass is also detected through `timeupdate`/`ended` and timers, not 
   - The `?k=` key in the URL is required by `/api/hello`.
   - `src/main.js` disables `WebRtcHideLocalIpsWithMdns` so real IPs are announced on the local network.
   - The server config (ports, `host`, network adapter, key, front/back camera) lives in `userData/modules/camera/config.json`, not in layer state.
+
+**`music/`** (Now playing) only works inside SceneCue. It reads Spotify from Windows' media controls (SMTC), with no Spotify API or account:
+- `src/backend/smtc.ps1` runs in Windows PowerShell 5.1 (the only one that loads WinRT types without extra modules). Every 500 ms it prints one JSON line: `{ app, title, artist, album, status, position, duration, updated, cover? }`, or `{ app: null }`.
+  - The session is the one whose `SourceAppUserModelId` matches `spotify`: the web player (a browser session) is not seen.
+  - `cover` (base64) is only sent on a track change, then again if it changes during the next few reads (Spotify can publish it late).
+  - PowerShell can't call methods on WinRT streams: the cover is read through `AsStreamForRead`, called by reflection.
+  - The script exits by itself when SceneCue stops reading its output (the write fails).
+- `backend.js` copies the script to `userData/modules/music` (PowerShell can't read inside `app.asar`). It starts it on `watch`, which pages call every 20 s, and kills it 60 s after the last call. It only emits `track` on real changes (song, play/pause, cover, a jump of more than 1.5 s). After three crashes in a row it reports an error, and keeps retrying.
+- `track.position` is valid at `track.at` (ms); pages extrapolate it while playing (`Music.positionOf`).
+- Previews show a sample song while Spotify is closed. The overlay (`init().output`) never does: the card stays off screen without a song, or while paused with "Masquer".
+- `snap-music.js` replaces `child_process.spawn` before loading `main.js`, so the backend reads a fake Spotify driven by the scenario.
 
 ## Translation
 

@@ -5,7 +5,7 @@
 # SceneCue
 
 **Scene control for streaming on Discord.**
-Animated text, images, GIFs, videos and camera (even your iPhone's) shown on top of your screen,
+Animated text, images, GIFs, videos, camera (even your iPhone's) and the song playing on Spotify, shown on top of your screen,
 on a transparent background, on demand or with a keyboard shortcut.
 
 [**Download**](https://franckitho.github.io/scenecue/) · [Website](https://franckitho.github.io/scenecue/) · [Releases](https://github.com/franckitho/scenecue/releases)
@@ -41,6 +41,8 @@ Share your **entire screen** in Discord and the scene is part of the stream.
   Play *once*, *looped* or *boomerang*, with speed, trimming and sound.
 - **Camera**: webcam or capture card, or **your iPhone's camera over Wi-Fi**, with no app to install.
   Round or circle shape, border, zoom and crop.
+- **Now playing**: the song playing in **Spotify**, with its cover, title, artist and progress bar,
+  updated by itself. No Spotify account to connect.
 - **French or English interface**: SceneCue starts in English, and the **FR | EN** switch in the title bar changes it at any time.
 - **Everything stays with you**: no account, no telemetry, no outside server.
   The iPhone's video only travels over your local network.
@@ -138,6 +140,21 @@ Then:
 
 The phone page follows the phone's language (French or English).
 
+### Now playing
+
+Shows the song playing in the **Spotify desktop app**: cover, title, artist, album, progress bar and time.
+There is nothing to connect: SceneCue reads it from Windows' media controls (the ones shown next to the volume).
+The Spotify web player, in a browser, isn't supported.
+
+- **Layout**: *Card* (cover on the left), *Compact* (a single line) or *Cover* (large cover, text below).
+  Drag the card in the preview to place it, pull its corner to resize it. A title too long for the card scrolls.
+- **Colors**: background and its opacity, text, and an accent (progress bar, equalizer) taken from the song's cover
+  or chosen by you.
+- **Paused**: the card stays, dims or leaves the screen until playback resumes.
+- **New song**: instant, fade or slide transition.
+
+While Spotify is closed, the editor's preview shows a sample song and the card stays off screen.
+
 ## Troubleshooting
 
 | Problem | Solution |
@@ -150,6 +167,7 @@ The phone page follows the phone's language (French or English).
 | The iPhone's picture freezes | iOS cuts the camera when Safari goes to the background or the screen locks. Come back to the page: it reconnects by itself. |
 | “Camera already used” | Discord, OBS or Teams are using the webcam. Close them, then click **Retry**. |
 | “Port 8443 is already used” | Another application uses this port. Change `port` in `%APPDATA%\SceneCue\modules\camera\config.json` and restart SceneCue. |
+| Now playing says “Spotify isn't open” while music plays | Use the Spotify **desktop app**: the web player isn't supported. |
 
 ## Privacy
 
@@ -158,6 +176,8 @@ The phone page follows the phone's language (French or English).
   (ports 8443 and 8080). Only a device that has the QR code's secret code can send its video to it.
   The video goes straight from the phone to the PC (WebRTC), without going through the Internet.
 - Files imported into the library are copied to `%APPDATA%\SceneCue\media`. They never leave your PC.
+- The Now playing module reads Windows' media controls locally, through Windows PowerShell running in the background.
+  It only runs while a scene uses the module, and contacts neither Spotify nor any other server.
 
 ## Development
 
@@ -180,6 +200,7 @@ Code comments are in French.
 ├─ text-animated/    Animated text module (also runs on its own: Pancarte)
 ├─ media/            Image / video module
 ├─ cam/              Camera module (HTTPS server + page for the phone)
+├─ music/            Now playing module (reads Spotify through Windows' media controls)
 ├─ site/             project website (GitHub Pages)
 ├─ scripts/          executable build, icons, website, test scenarios
 ├─ .github/          build, release and website pipelines
@@ -208,11 +229,12 @@ take screenshots and check the result:
 npx electron scripts/snap.js <folder>         # SceneCue: scenes, layers, putting on screen
 npx electron scripts/snap-media.js <folder>   # Image / video: 31 checks (results.txt)
 npx electron scripts/snap-cam.js <folder>     # Camera: 27 checks, with a simulated iPhone
+npx electron scripts/snap-music.js <folder>   # Now playing: 36 checks, with a simulated Spotify
 npx electron scripts/snap-i18n.js <folder>    # English interface: no French left, switch back to French
 ```
 
 Each takes about a minute and opens windows. They are muted, and the camera scenarios use Chromium's fake camera:
-your webcam is never opened. To test the built executable, add
+your webcam is never opened, and the Now playing scenario never controls your Spotify. To test the built executable, add
 `SCENECUE_MAIN="C:/path/dist/SceneCue-win32-x64/resources/app.asar/src/main.js"`.
 
 ### Releases and website
@@ -253,7 +275,7 @@ SceneCue detects it at startup and adds it to the catalog.
 ```
 
 The full contract (bridge, events, media library, backend, translation) is in [MODULES.md](MODULES.md).
-The three bundled modules are examples; [cam](cam/) also shows a Node backend.
+The bundled modules are examples; [cam](cam/) and [music](music/) also show a Node backend.
 
 ## Contributing
 

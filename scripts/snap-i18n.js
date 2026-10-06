@@ -86,7 +86,7 @@ app.whenReady().then(async () => {
   check('nouvelle scène nommée en anglais', (await js(`[...document.querySelectorAll('#scenes .row')].map((r) => { const i = r.querySelector('.row-input'); return i ? i.value : r.querySelector('.row-name').textContent; }).join(',')`)).includes('New scene'));
   await leaks('scène vide et catalogue', main.webContents);
   const cards = await js(`[...document.querySelectorAll('#catalog .mod-card b')].map((b) => b.textContent).join(', ')`);
-  check('catalogue en anglais', cards.includes('Camera') && cards.includes('Image / video') && cards.includes('Animated text'), cards);
+  check('catalogue en anglais', cards.includes('Camera') && cards.includes('Image / video') && cards.includes('Animated text') && cards.includes('Now playing'), cards);
 
   const addModule = async (name, part) => {
     await js(`document.querySelector('#add-layer').click()`);
@@ -106,13 +106,17 @@ app.whenReady().then(async () => {
   await leaks('Image / vidéo', null, 'media/src/renderer/index.html');
   await save(main, '03-media-en');
 
+  await addModule('Now playing', 'music/src/renderer/index.html');
+  await leaks('Musique en cours', null, 'music/src/renderer/index.html');
+  await save(main, '04-musique-en');
+
   await addModule('Camera', 'cam/src/renderer/index.html');
   const cam = () => frameOf('cam/src/renderer/index.html');
   const t0 = Date.now();
   while (!(await cam().executeJavaScript('!!srv && srv.running')) && Date.now() - t0 < 8000) await wait(200);
   await wait(800);
   await leaks('Caméra (iPhone)', null, 'cam/src/renderer/index.html');
-  await save(main, '04-camera-en');
+  await save(main, '05-camera-en');
   const url = (await cam().executeJavaScript('srv.url')).replace(/\/\/[^:/]+:/, '//127.0.0.1:');
 
   // page du téléphone, dans la langue du « téléphone » (ici l'anglais du système)
@@ -135,7 +139,7 @@ app.whenReady().then(async () => {
   await js(`document.querySelector('#lang [data-v="fr"]').click()`);
   await wait(2500);
   check('retour au français', main.webContents.getURL().includes('lang=fr') && (await js(`document.querySelector('#tb-status-text').textContent`)) === 'Hors antenne');
-  await save(main, '05-retour-fr');
+  await save(main, '06-retour-fr');
 
   fs.writeFileSync(path.join(out, 'results.txt'), results.join('\n'));
   console.log(results.join('\n'));

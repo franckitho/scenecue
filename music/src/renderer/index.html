@@ -1,0 +1,138 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data:; frame-src 'self'">
+  <title>Musique en cours</title>
+  <link rel="stylesheet" href="fonts.css">
+  <link rel="stylesheet" href="music.css">
+  <link rel="stylesheet" href="app.css">
+</head>
+<body>
+
+<main class="app">
+  <section class="workspace">
+
+    <div class="stage-bar">
+      <div class="stage-left">
+        <span class="label">Aperçu</span>
+        <span class="mono-note" id="scale-note"></span>
+        <span class="chip" id="chip"><i></i><span id="chip-text"></span></span>
+      </div>
+      <div class="stage-right">
+        <div class="pad" id="pad" title="Position rapide"></div>
+        <button class="btn" id="replay" title="Rejouer l'animation d'entrée">
+          <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8a5 5 0 1 0 1.6-3.7M3 2.5v2.8h2.8" /></svg>
+          Rejouer l'entrée
+        </button>
+      </div>
+    </div>
+
+    <div class="stage" id="stage">
+      <div class="frame editable" id="frame">
+        <div class="guide guide-v" id="guide-v"></div>
+        <div class="guide guide-h" id="guide-h"></div>
+      </div>
+      <div class="stage-hint">Glisse la carte pour la placer · tire le coin pour la redimensionner · Alt : sans aimant</div>
+      <div class="toast" id="toast" hidden></div>
+    </div>
+
+    <div class="desk">
+      <div class="card np-card">
+        <div class="card-head">
+          <span class="label">Spotify</span>
+          <span class="mono-note" id="np-note"></span>
+        </div>
+        <div class="np">
+          <div class="np-art" id="np-art">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 18V5l11-2v13" /><circle cx="6" cy="18" r="3" /><circle cx="17" cy="16" r="3" /></svg>
+            <img id="np-img" alt="">
+          </div>
+          <div class="np-text">
+            <b id="np-title" data-no-i18n></b>
+            <span id="np-sub" data-no-i18n></span>
+          </div>
+        </div>
+        <p class="hint warn" id="np-error" hidden></p>
+      </div>
+      <div class="card help-card">
+        <div class="card-head"><span class="label">Comment ça marche</span></div>
+        <p class="hint" data-i18n>Lance l'<b>application Spotify pour PC</b> : le morceau s'affiche tout seul, sans compte à connecter. Le lecteur web, dans le navigateur, n'est pas pris en charge.</p>
+        <p class="hint" data-i18n>Spotify fermé : l'aperçu montre un <b>morceau d'exemple</b>, et à l'écran la carte reste cachée jusqu'au premier morceau.</p>
+      </div>
+    </div>
+  </section>
+
+  <aside class="inspector">
+
+    <section class="sec" data-sec="layout">
+      <header class="sec-head"><span class="label">Disposition</span></header>
+      <div class="sec-body">
+        <div class="seg seg--big" data-bind="layout" data-options="card:Carte,compact:Compacte,cover:Pochette" data-titles="Pochette à gauche, titre et artiste à droite|Une seule ligne : titre · artiste|Grande pochette, texte dessous"></div>
+        <div class="ctl range" data-bind="scale" data-label="Taille" data-min="0.4" data-max="3" data-step="0.05" data-format="pct"></div>
+        <div class="ctl range" data-bind="width" data-label="Longueur" data-min="300" data-max="1200" data-step="10" data-when="not-cover"></div>
+        <p class="hint">Un titre trop long pour la carte défile tout seul. Double-clic sur un curseur : valeur par défaut.</p>
+      </div>
+    </section>
+
+    <section class="sec" data-sec="content">
+      <header class="sec-head"><span class="label">Contenu</span></header>
+      <div class="sec-body">
+        <div class="toggles">
+          <button class="chip-toggle" data-bind="showCover" data-when="not-cover">Pochette</button>
+          <button class="chip-toggle" data-bind="showAlbum" data-when="not-compact">Album</button>
+          <button class="chip-toggle" data-bind="progress">Progression</button>
+          <button class="chip-toggle" data-bind="times" data-when="not-compact" title="Temps écoulé et durée du morceau">Temps</button>
+          <button class="chip-toggle" data-bind="eq" title="Petites barres qui dansent pendant la lecture">Égaliseur</button>
+        </div>
+      </div>
+    </section>
+
+    <section class="sec" data-sec="colors">
+      <header class="sec-head"><span class="label">Couleurs</span></header>
+      <div class="sec-body">
+        <div class="ctl">
+          <span class="ctl-label">Fond</span>
+          <label class="color-field"><input type="color" data-color="bg"><span class="hex"></span></label>
+        </div>
+        <div class="ctl range" data-bind="bgOpacity" data-label="Opacité" data-min="0" data-max="1" data-step="0.01" data-format="pct"></div>
+        <div class="ctl">
+          <span class="ctl-label">Texte</span>
+          <label class="color-field"><input type="color" data-color="text"><span class="hex"></span></label>
+        </div>
+        <div class="ctl">
+          <span class="ctl-label">Accent</span>
+          <div class="row">
+            <div class="seg" data-bind="accentMode" data-options="auto:Pochette,custom:Au choix" data-titles="Couleur tirée de la pochette du morceau|Toujours la même couleur"></div>
+            <label class="color-field" data-when="accent-custom"><input type="color" data-color="accent"><span class="hex"></span></label>
+          </div>
+        </div>
+        <div class="ctl range" data-bind="radius" data-label="Coins" data-min="0" data-max="48" data-step="1" data-unit=" px"></div>
+        <div class="ctl-row"><button class="chip-toggle wide" data-bind="shadow">Ombre portée</button></div>
+      </div>
+    </section>
+
+    <section class="sec" data-sec="playback">
+      <header class="sec-head"><span class="label">Lecture</span></header>
+      <div class="sec-body">
+        <div class="ctl"><span class="ctl-label">En pause</span><div class="seg" data-bind="paused" data-options="show:Afficher,dim:Estomper,hide:Masquer" data-titles="La carte reste telle quelle|La carte pâlit|La carte quitte l'écran jusqu'à la reprise"></div></div>
+        <div class="ctl"><span class="ctl-label">Transition</span><div class="seg" data-bind="change" data-options="none:Directe,fade:Fondu,slide:Glissé" data-titles="Le nouveau morceau remplace l'ancien d'un coup|Le nouveau morceau apparaît en fondu|Le titre et la pochette arrivent en glissant"></div></div>
+      </div>
+    </section>
+
+    <section class="sec" data-sec="anim">
+      <header class="sec-head"><span class="label">Animation d'entrée</span></header>
+      <div class="sec-body">
+        <div class="grid-pick" data-bind="entrance" data-options="none:Directe,fade:Fondu,pop:Pop,rise:Montée,zoom:Zoom,slide:Glissé"></div>
+      </div>
+    </section>
+
+  </aside>
+</main>
+
+<script src="i18n.js"></script>
+<script src="en.js"></script>
+<script src="music.js"></script>
+<script src="app.js"></script>
+</body>
+</html>

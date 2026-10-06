@@ -1,0 +1,188 @@
+/* Musique en cours — styles du rendu (partagés aperçu / calque à l'écran).
+ * Mesures en px du canevas de 1920 px, multipliées par la taille choisie : calc(N * var(--u)). */
+
+.mu-canvas {
+  position: relative;
+  overflow: hidden;
+  transform-origin: 0 0;
+  color: var(--fg, #fff);
+  font-family: 'Archivo', 'Segoe UI', sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+.mu-box {
+  position: absolute;
+  transform: translate(-50%, -50%);
+}
+
+.mu-card {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: calc(18 * var(--u));
+  box-sizing: border-box;
+  width: calc(var(--w) * var(--u));
+  padding: calc(16 * var(--u));
+  border-radius: calc(var(--radius) * var(--u));
+  background: var(--bg);
+  overflow: hidden;
+  transition: opacity .4s ease;
+}
+.mu-shadow .mu-card { filter: drop-shadow(0 calc(14 * var(--u)) calc(26 * var(--u)) rgba(0, 0, 0, .5)) drop-shadow(0 calc(2 * var(--u)) calc(6 * var(--u)) rgba(0, 0, 0, .35)); }
+
+/* ---------- pochette ---------- */
+.mu-art {
+  position: relative;
+  display: none;
+  flex: none;
+  width: calc(96 * var(--u));
+  height: calc(96 * var(--u));
+  border-radius: calc(var(--radius) * .55 * var(--u));
+  overflow: hidden;
+}
+.mu-with-cover .mu-art { display: block; }
+.mu-img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0;
+}
+.mu-has-cover .mu-img { opacity: 1; }
+.mu-ph {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  background: linear-gradient(135deg, var(--accent), color-mix(in srgb, var(--accent) 30%, #000));
+}
+.mu-has-cover .mu-ph { display: none; }
+.mu-ph svg { width: 44%; height: 44%; fill: none; stroke: rgba(255, 255, 255, .92); stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+
+/* ---------- textes ---------- */
+.mu-meta { flex: 1; min-width: 0; display: grid; gap: calc(3 * var(--u)); }
+.mu-head { display: flex; align-items: center; gap: calc(12 * var(--u)); min-width: 0; }
+.mu-head .mu-line { flex: 1; }
+.mu-line { min-width: 0; overflow: hidden; white-space: nowrap; }
+.mu-run { display: flex; width: max-content; }
+.mu-txt { flex: none; white-space: pre; }
+.mu-title { font-size: calc(28 * var(--u)); font-weight: 700; line-height: 1.22; letter-spacing: -.01em; }
+.mu-artist { font-size: calc(21 * var(--u)); font-weight: 500; line-height: 1.3; opacity: .74; }
+.mu-album { display: none; font-size: calc(17 * var(--u)); font-weight: 500; line-height: 1.3; opacity: .5; }
+.mu-with-album .mu-album:not(.mu-empty) { display: block; }
+.mu-sub { display: none; }
+
+/* texte trop long : il défile, en s'effaçant sur les bords */
+.mu-line.mu-mq {
+  margin-left: calc(-12 * var(--u));
+  padding-left: calc(12 * var(--u));
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 calc(12 * var(--u)), #000 calc(100% - 28 * var(--u)), transparent);
+  mask-image: linear-gradient(90deg, transparent, #000 calc(12 * var(--u)), #000 calc(100% - 28 * var(--u)), transparent);
+}
+.mu-mq .mu-run { animation: mu-marquee var(--mq-dur, 12s) linear infinite; }
+@keyframes mu-marquee { 0%, 20% { transform: translateX(0); } 100% { transform: translateX(var(--mq-dist, 0)); } }
+
+/* ---------- égaliseur ---------- */
+.mu-eq {
+  display: none;
+  flex: none;
+  order: 2;
+  align-items: flex-end;
+  gap: calc(3 * var(--u));
+  height: calc(18 * var(--u));
+}
+.mu-with-eq .mu-eq { display: flex; }
+.mu-eq i {
+  width: calc(4 * var(--u));
+  height: 100%;
+  border-radius: calc(2 * var(--u));
+  background: var(--accent);
+  transform-origin: 50% 100%;
+  transform: scaleY(.22);
+  transition: transform .3s;
+}
+.mu-playing .mu-eq i { animation: mu-eq .9s ease-in-out infinite alternate; }
+.mu-playing .mu-eq i:nth-child(2) { animation-duration: .7s; animation-delay: -.4s; }
+.mu-playing .mu-eq i:nth-child(3) { animation-duration: 1.1s; animation-delay: -.2s; }
+.mu-playing .mu-eq i:nth-child(4) { animation-duration: .8s; animation-delay: -.6s; }
+@keyframes mu-eq { 0% { transform: scaleY(.2); } 55% { transform: scaleY(1); } 100% { transform: scaleY(.4); } }
+
+/* ---------- progression ---------- */
+.mu-bar-row { display: none; align-items: center; gap: calc(12 * var(--u)); margin-top: calc(9 * var(--u)); }
+.mu-with-bar .mu-bar-row, .mu-with-times .mu-bar-row { display: flex; }
+.mu-bar {
+  flex: 1;
+  height: calc(5 * var(--u));
+  border-radius: calc(3 * var(--u));
+  background: color-mix(in srgb, var(--fg) 18%, transparent);
+  overflow: hidden;
+}
+.mu-canvas:not(.mu-with-bar) .mu-bar { display: none; }
+.mu-bar.mu-empty { visibility: hidden; }
+.mu-bar i { display: block; width: 0; height: 100%; border-radius: inherit; background: var(--accent); transition: width .25s linear; }
+.mu-time {
+  display: none;
+  flex: none;
+  font: 500 calc(15 * var(--u))/1 'JetBrains Mono', Consolas, monospace;
+  font-variant-numeric: tabular-nums;
+  opacity: .7;
+}
+.mu-with-times .mu-time { display: block; }
+
+/* ---------- en pause ---------- */
+.mu-p-dim.mu-paused .mu-card { opacity: .55; }
+.mu-preview.mu-p-hide.mu-paused .mu-card { opacity: .3; } /* masquée à l'écran : fantôme dans les aperçus */
+
+/* ---------- disposition compacte : une ligne ---------- */
+.mu-l-compact .mu-card { gap: calc(14 * var(--u)); padding: calc(10 * var(--u)) calc(22 * var(--u)) calc(10 * var(--u)) calc(10 * var(--u)); }
+.mu-l-compact:not(.mu-with-cover) .mu-card { padding-left: calc(22 * var(--u)); }
+.mu-l-compact .mu-art { width: calc(46 * var(--u)); height: calc(46 * var(--u)); border-radius: calc(var(--radius) * .45 * var(--u)); }
+.mu-l-compact .mu-eq { order: 0; }
+.mu-l-compact .mu-title { font-size: calc(22 * var(--u)); }
+.mu-l-compact .mu-sub { display: inline; font-weight: 500; opacity: .7; }
+.mu-l-compact .mu-artist, .mu-l-compact .mu-album, .mu-l-compact .mu-time { display: none !important; }
+.mu-l-compact .mu-bar-row { position: absolute; left: 0; right: 0; bottom: 0; margin: 0; }
+.mu-l-compact .mu-bar { height: calc(3 * var(--u)); border-radius: 0; }
+
+/* ---------- disposition pochette : grande pochette, texte dessous ---------- */
+.mu-l-cover .mu-card { flex-direction: column; align-items: stretch; width: calc(320 * var(--u)); padding: calc(14 * var(--u)); gap: calc(14 * var(--u)); }
+.mu-l-cover .mu-art { width: 100%; height: auto; aspect-ratio: 1; }
+.mu-l-cover .mu-meta { flex: none; padding: 0 calc(4 * var(--u)) calc(4 * var(--u)); }
+.mu-l-cover .mu-title { font-size: calc(25 * var(--u)); }
+.mu-l-cover .mu-artist { font-size: calc(19 * var(--u)); }
+
+/* ---------- nouveau morceau ---------- */
+.mu-swap.mu-chg-fade .mu-meta, .mu-swap.mu-chg-fade .mu-art { animation: mu-swap-fade .6s ease-out both; }
+@keyframes mu-swap-fade { from { opacity: 0; } }
+
+.mu-swap.mu-chg-slide .mu-head,
+.mu-swap.mu-chg-slide .mu-artist,
+.mu-swap.mu-chg-slide .mu-album { animation: mu-swap-slide .65s cubic-bezier(.16, 1, .3, 1) both; }
+.mu-swap.mu-chg-slide .mu-artist { animation-delay: .07s; }
+.mu-swap.mu-chg-slide .mu-album { animation-delay: .14s; }
+@keyframes mu-swap-slide { from { opacity: 0; transform: translateY(calc(18 * var(--u))); } }
+.mu-swap.mu-chg-slide .mu-art { animation: mu-swap-art .7s cubic-bezier(.2, 1.3, .4, 1) both; }
+@keyframes mu-swap-art { from { opacity: 0; transform: scale(.8) rotate(-6deg); } }
+
+/* ---------- apparition / disparition ---------- */
+.mu-hidden .mu-enter { opacity: 0; visibility: hidden; }
+.mu-out .mu-enter { animation: mu-leave .36s ease-in both; }
+@keyframes mu-leave { to { opacity: 0; scale: .94; filter: blur(8px); } }
+
+.mu-in.mu-ent-fade .mu-enter { animation: mu-in-fade .6s ease-out both; }
+@keyframes mu-in-fade { from { opacity: 0; } }
+
+.mu-in.mu-ent-pop .mu-enter { animation: mu-in-pop .7s cubic-bezier(.2, 1.55, .4, 1) both; }
+@keyframes mu-in-pop { from { opacity: 0; scale: .3; } 35% { opacity: 1; } }
+
+.mu-in.mu-ent-rise .mu-enter { animation: mu-in-rise .85s cubic-bezier(.16, 1, .3, 1) both; }
+@keyframes mu-in-rise { from { opacity: 0; translate: 0 120px; } }
+
+.mu-in.mu-ent-zoom .mu-enter { animation: mu-in-zoom .9s cubic-bezier(.2, .8, .2, 1) both; }
+@keyframes mu-in-zoom { from { opacity: 0; scale: 1.35; filter: blur(24px); } }
+
+.mu-in.mu-ent-slide .mu-enter { animation: mu-in-slide .8s cubic-bezier(.2, 1.15, .35, 1) both; }
+@keyframes mu-in-slide { from { translate: var(--slide, -2000px) 0; } }
+
+.mu-in.mu-ent-none .mu-enter { animation: none; }
