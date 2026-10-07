@@ -498,19 +498,34 @@ function createTray() {
 }
 
 // ---------- raccourcis ----------
+const toggleLive = () => setLive(live.scene ? null : (store.selected.scene || (store.scenes[0] && store.scenes[0].id)));
+function toggleScene(n) {
+  const s = store.scenes[n - 1];
+  if (s) setLive(live.scene === s.id ? null : s.id);
+}
+
 function registerHotkeys() {
-  hotkeys.toggle = globalShortcut.register(HOTKEY_TOGGLE, () => {
-    setLive(live.scene ? null : (store.selected.scene || (store.scenes[0] && store.scenes[0].id)));
-  });
+  hotkeys.toggle = globalShortcut.register(HOTKEY_TOGGLE, toggleLive);
   let ok = true;
-  for (let i = 1; i <= 9; i++) {
-    ok = globalShortcut.register(`Control+Alt+${i}`, () => {
-      const s = store.scenes[i - 1];
-      if (s) setLive(live.scene === s.id ? null : s.id);
-    }) && ok;
-  }
+  for (let i = 1; i <= 9; i++) ok = globalShortcut.register(`Control+Alt+${i}`, () => toggleScene(i)) && ok;
   hotkeys.scenes = ok;
 }
+
+// Les mêmes actions en ligne de commande, pour un raccourci du système quand les raccourcis globaux ne passent pas
+// (Wayland) : « scenecue --toggle » vaut Ctrl+Alt+B, « scenecue --scene=2 » Ctrl+Alt+2. Le nouveau lancement
+// s'arrête aussitôt et transmet sa ligne de commande à SceneCue déjà ouvert (second-instance).
+function runCommand(argv) {
+  const scene = argv.find((a) => a.startsWith('--scene='));
+  if (argv.includes('--toggle')) toggleLive();
+  else if (scene) toggleScene(Number(scene.slice('--scene='.length)));
+  else focusWindow();
+}
+
+// Linux, session Wayland : une fenêtre n'y choisit ni son écran ni de rester au premier plan, ce que l'overlay
+// demande. SceneCue passe donc par XWayland (X11). Chromium choisit au démarrage, avant ce script :
+// on relance avec --ozone-platform=x11. Un --ozone-platform(-hint) donné au lancement est respecté.
+const needsX11 = () => process.platform === 'linux' && process.env.XDG_SESSION_TYPE === 'wayland' && !!process.env.DISPLAY
+  && !app.commandLine.hasSwitch('ozone-platform') && !app.commandLine.hasSwitch('ozone-platform-hint');
 
 // ---------- IPC ----------
 ipcMain.handle('init', () => ({
@@ -635,8 +650,11 @@ ipcMain.handle('media-remove', async (_e, id) => {
 // ---------- cycle de vie ----------
 if (!app.requestSingleInstanceLock()) {
   app.quit();
+} else if (needsX11()) {
+  app.relaunch({ args: [...process.argv.slice(1), '--ozone-platform=x11'] });
+  app.exit(0);
 } else {
-  app.on('second-instance', focusWindow);
+  app.on('second-instance', (_e, argv) => runCommand(argv));
 
   app.whenReady().then(() => {
     app.setAppUserModelId('SceneCue');

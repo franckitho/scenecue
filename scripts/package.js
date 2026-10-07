@@ -1,4 +1,7 @@
-// Construit dist/SceneCue-win32-x64/SceneCue.exe avec tous les modules trouvés.
+// Construit SceneCue avec tous les modules trouvés, pour Windows ou Linux :
+//   npm run package                        → le système en cours (Linux sous Linux, Windows sinon)
+//   npm run package -- --platform=win32    → dist/SceneCue-win32-x64/SceneCue.exe
+//   npm run package -- --platform=linux    → dist/SceneCue-linux-x64/scenecue (puis scripts/make-deb.js pour le .deb)
 // De chaque module, on n'embarque que son code et les node_modules listés dans "include" (module.json) :
 // ni son Electron, ni son propre dist.
 const path = require('path');
@@ -7,6 +10,12 @@ const lib = require('@electron/packager');
 
 const packager = lib.packager || lib.default || lib;
 const ROOT = path.join(__dirname, '..');
+const arg = (name) => (process.argv.find((a) => a.startsWith(`--${name}=`)) || '').split('=')[1];
+const platform = arg('platform') || (process.platform === 'linux' ? 'linux' : 'win32');
+if (platform !== 'win32' && platform !== 'linux') {
+  console.error(`Plateforme non prise en charge : ${platform} (win32 ou linux)`);
+  process.exit(1);
+}
 
 const modules = new Map(); // chemin relatif (posix) -> chemins node_modules à garder
 for (const base of ['', 'modules']) {
@@ -44,17 +53,26 @@ function ignore(p) {
   const out = await packager({
     dir: ROOT,
     name: 'SceneCue',
-    executableName: 'SceneCue',
-    platform: 'win32',
+    // sous Linux, un exécutable en minuscules, comme les autres commandes
+    executableName: platform === 'linux' ? 'scenecue' : 'SceneCue',
+    platform,
     arch: 'x64',
     out: path.join(ROOT, 'dist'),
     overwrite: true,
     asar: true,
     prune: true,
-    icon: path.join(ROOT, 'assets', 'icon.ico'),
+    icon: platform === 'win32' ? path.join(ROOT, 'assets', 'icon.ico') : undefined,
     appCopyright: 'SceneCue',
     win32metadata: { ProductName: 'SceneCue', FileDescription: 'SceneCue' },
     ignore,
   });
+  // Linux : l'icône à côté de l'exécutable, pour un raccourci (.desktop) fait à la main ou par make-deb.js ;
+  // le dossier sort en 700 du packager, lisible par tous comme le reste
+  if (platform === 'linux') {
+    for (const dir of out) {
+      fs.chmodSync(dir, 0o755);
+      fs.copyFileSync(path.join(ROOT, 'assets', 'icon.png'), path.join(dir, 'scenecue.png'));
+    }
+  }
   console.log('Écrit dans', out.join(', '));
 })().catch((e) => { console.error(e); process.exit(1); });

@@ -32,6 +32,9 @@ function stubBridge() {
 // ---------- utilitaires ----------
 const $ = (s, r = document) => r.querySelector(s);
 const $$ = (s, r = document) => [...r.querySelectorAll(s)];
+const LINUX = /Linux/.test(navigator.userAgent);
+// conseils propres au système (pare-feu de Windows ou de Linux)
+for (const e of $$('[data-os]')) e.hidden = e.dataset.os !== (LINUX ? 'linux' : 'win');
 const { clamp } = C;
 function el(tag, cls, text) {
   const e = document.createElement(tag);
@@ -440,7 +443,9 @@ function refreshWait() {
   } else if (srv && srv.error) {
     title = _('Le serveur ne démarre pas'); text = srv.error;
   } else if (srv && srv.phone && srv.phone.connected) {
-    title = _("Connexion à l'iPhone…"); text = _('Si rien ne vient, vérifie que Windows autorise SceneCue sur les réseaux privés.');
+    title = _("Connexion à l'iPhone…");
+    text = LINUX ? _('Si rien ne vient, vérifie que le pare-feu laisse passer le port {port}.', { port: srv.port })
+      : _('Si rien ne vient, vérifie que Windows autorise SceneCue sur les réseaux privés.');
   } else {
     title = _("En attente de l'iPhone"); text = _("Scanne le QR code ci-dessous avec l'appareil photo de l'iPhone.");
   }

@@ -1,13 +1,16 @@
-# Construit SceneCue.exe sur Windows à chaque push sur main et à chaque pull request :
-# le zip est téléchargeable 14 jours depuis l'onglet Actions (section « Artifacts »).
+# Construit SceneCue pour Windows et pour Linux à chaque push sur main et à chaque pull request :
+# les fichiers sont téléchargeables 14 jours depuis l'onglet Actions (section « Artifacts »).
+#   Windows : SceneCue-win-x64.zip      (SceneCue.exe, à dézipper)
+#   Linux   : SceneCue-linux-x64.tar.gz (dossier portable, exécutable scenecue)
+#             SceneCue-linux-x64.deb    (Debian, Ubuntu : installe SceneCue dans le menu des applications)
 #
 # Publier une version : pousse une étiquette qui commence par v
 #   git tag v1.2.0
 #   git push origin v1.2.0
-# → même construction, puis une release GitHub avec SceneCue-win-x64.zip.
-# Le nom du fichier ne change pas d'une version à l'autre : le lien
+# → mêmes constructions, puis une release GitHub avec les trois fichiers.
+# Leurs noms ne changent pas d'une version à l'autre : le lien
 # https://github.com/<compte>/<dépôt>/releases/latest/download/SceneCue-win-x64.zip
-# télécharge toujours la dernière version (c'est celui du site).
+# (ou SceneCue-linux-x64.tar.gz, SceneCue-linux-x64.deb) télécharge toujours la dernière version (c'est celui du site).
 name: Build
 
 on:
@@ -25,7 +28,7 @@ concurrency:
   cancel-in-progress: ${{ !startsWith(github.ref, 'refs/tags/') }}
 
 jobs:
-  build:
+  windows:
     name: SceneCue.exe
     runs-on: windows-latest
     steps:
@@ -56,7 +59,7 @@ jobs:
         run: npm pkg set "version=$('${{ github.ref_name }}'.Substring(1))"
 
       - name: Construction
-        run: npm run package
+        run: npm run package # Windows par défaut hors Linux
 
       - name: Zip
         run: Compress-Archive -Path dist/SceneCue-win32-x64 -DestinationPath SceneCue-win-x64.zip
@@ -67,8 +70,82 @@ jobs:
           archive: false # le zip tel quel, pas un zip dans un zip
           retention-days: 14
 
-      - name: Release
+  linux:
+    name: SceneCue Linux
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: |
+            package-lock.json
+            cam/package-lock.json
+            text-animated/package-lock.json
+
+      - name: Dépendances
+        run: |
+          npm ci
+          npm ci --omit=dev --prefix cam
+          npm ci --omit=dev --prefix text-animated
+
+      - name: Syntaxe
+        run: npm run check
+
+      - name: Numéro de version (étiquette v1.2.0 → 1.2.0)
+        if: startsWith(github.ref, 'refs/tags/v')
+        run: npm pkg set "version=${GITHUB_REF_NAME#v}"
+
+      - name: Construction
+        run: npm run package -- --platform=linux
+
+      # tar garde les droits d'exécution (un zip fait sous Windows les perdrait)
+      - name: Archive et paquet .deb
+        run: |
+          tar -czf SceneCue-linux-x64.tar.gz -C dist SceneCue-linux-x64
+          node scripts/make-deb.js
+          mv dist/SceneCue-linux-x64.deb .
+
+      - uses: actions/upload-artifact@v7
+        with:
+          path: SceneCue-linux-x64.tar.gz
+          archive: false
+          retention-days: 14
+
+      - uses: actions/upload-artifact@v7
+        with:
+          path: SceneCue-linux-x64.deb
+          archive: false
+          retention-days: 14
+
+  # Rassemble les trois fichiers à chaque construction (un souci de téléchargement se voit tout de suite,
+  # pas le jour d'une version) ; ne publie la release que pour une étiquette v*.
+  release:
+    name: Release
+    needs: [windows, linux]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v8
+        with:
+          path: release
+          merge-multiple: true
+          skip-decompress: true # le zip Windows tel quel, pas son contenu
+
+      - name: Fichiers
+        run: |
+          cd release
+          ls -l
+          for f in SceneCue-win-x64.zip SceneCue-linux-x64.tar.gz SceneCue-linux-x64.deb; do
+            test -s "$f" || { echo "::error::$f manquant"; exit 1; }
+          done
+
+      - name: Publication
         if: startsWith(github.ref, 'refs/tags/v')
         env:
           GH_TOKEN: ${{ github.token }}
-        run: gh release create "${{ github.ref_name }}" SceneCue-win-x64.zip --title "SceneCue ${{ github.ref_name }}" --generate-notes
+        run: >
+          gh release create "${{ github.ref_name }}" --repo "${{ github.repository }}"
+          --title "SceneCue ${{ github.ref_name }}" --generate-notes
+          release/SceneCue-win-x64.zip release/SceneCue-linux-x64.tar.gz release/SceneCue-linux-x64.deb

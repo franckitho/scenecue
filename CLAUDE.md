@@ -2,7 +2,7 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
-SceneCue: an Electron app (Windows) that composes **scenes** out of **modules** and shows them on top of the whole screen (transparent overlay, click-through) for Discord streams. Plain JavaScript, no build step, no framework. Repository: `github.com/franckitho/scenecue`. The app used to be called Régie: on first launch `migrateFromRegie()` in `main.js` takes over `%APPDATA%Regie` (`regie.json`, `media/`, `modules/`).
+SceneCue: an Electron app (Windows, and Linux since the `.deb`/`.tar.gz` build) that composes **scenes** out of **modules** and shows them on top of the whole screen (transparent overlay, click-through) for Discord streams. Plain JavaScript, no build step, no framework. Repository: `github.com/franckitho/scenecue`. The app used to be called Régie: on first launch `migrateFromRegie()` in `main.js` takes over `%APPDATA%Regie` (`regie.json`, `media/`, `modules/`).
 
 Languages, deliberately mixed:
 - **Interface**: French is the source language, written as-is in the HTML and JS. English comes from an `en.js` dictionary next to each page (see Translation below). Never hard-code English in the UI.
@@ -18,6 +18,8 @@ npm install && (cd cam && npm install)     # the Camera module has its own depen
 npm start                                   # SceneCue in dev mode (detects sibling modules)
 npm run check                               # node --check on every JS file (also run by CI)
 npm run package                             # dist/SceneCue-win32-x64/SceneCue.exe with every module (close SceneCue first: locked files)
+npm run package -- --platform=linux         # dist/SceneCue-linux-x64/scenecue (default when run on Linux)
+node scripts/make-deb.js                    # dist/SceneCue-linux-x64.deb from the Linux build (dpkg-deb, chrome-sandbox setuid root)
 npm run site -- --repo=franckitho/scenecue  # builds the website into _site/ (CI passes GITHUB_REPOSITORY instead)
 npx electron scripts/snap.js <dir>           # SceneCue scenario: PNG screenshots + console.log + scenecue.json
 npx electron scripts/snap-media.js <dir>     # Image / video module: 31 checks in results.txt + screenshots
@@ -30,6 +32,8 @@ cd text-animated && npm start               # Animated text module on its own ("
 ```
 
 The `snap*.js` scenarios start the real app with a temporary profile (`<dir>/userdata`), make the overlay invisible and drive the UI. Individual checks can't be run alone: run the whole scenario (about 1 min; windows appear on screen). They detect the main window by URL (`includes('/src/renderer/index.html')`, the URL carries `?lang=`). `snap.js`, `snap-media.js`, `snap-cam.js` and `snap-music.js` assert on French text: they force French with `--lang=fr-FR` (the app defaults to English; `snap-i18n.js` keeps `--lang=en-US` for the phone page). To test the packaged exe: `SCENECUE_MAIN="C:/…/dist/SceneCue-win32-x64/resources/app.asar/src/main.js"` (Windows path, not `/c/…`).
+
+On Linux the scenarios run headless under Xvfb, as root with `--no-sandbox`: `xvfb-run -a -s "-screen 0 1920x1080x24" npx electron --no-sandbox scripts/snap-media.js <dir>`. Without a window manager, X11 ignores always-on-top and `moveTop` (Electron sends `_NET_RESTACK_WINDOW` to the WM), and without a compositor transparent windows don't show: to look at the real overlay, run `openbox` and `xcompmgr` in the Xvfb session. `snap-mirror.js` can't run there (Xvfb gives Chromium a single screen), nor `snap-music.js` (Windows only).
 
 ## Architecture
 
@@ -97,7 +101,7 @@ The end of a pass is also detected through `timeupdate`/`ended` and timers, not 
 ## Website and CI
 
 - `site/` is the GitHub Pages site (French source + `en.js`, English by default through `data-lang-default="en"` on `<html>`, `?lang=fr` for French). `scripts/build-site.js` assembles `_site/` (site files, `docs/images`, icon, self-hosted fonts) and injects the repository (`data-repo`, absolute `og:` URLs). The download button links to `releases/latest/download/SceneCue-win-x64.zip` and reads the latest release from the GitHub API at load time.
-- `.github/workflows/build.yml`: Windows build on pushes to `main` and pull requests (zip kept 14 days as an artifact); a `v*` tag sets the package version and publishes a release with `SceneCue-win-x64.zip` (that file name must never change). `pages.yml` deploys `_site/` to GitHub Pages.
+- `.github/workflows/build.yml`: Windows and Linux builds on pushes to `main` and pull requests (files kept 14 days as artifacts), then a `release` job that downloads the three files on every run; on a `v*` tag (which also sets the package version) it publishes a release with `SceneCue-win-x64.zip`, `SceneCue-linux-x64.tar.gz` and `SceneCue-linux-x64.deb` (those file names must never change: the website links to `releases/latest/download/<name>`). `pages.yml` deploys `_site/` to GitHub Pages.
 
 ## Known pitfalls
 
@@ -108,5 +112,11 @@ The end of a pass is also detected through `timeupdate`/`ended` and timers, not 
   - mute with `webContents.setAudioMuted(true)` (the test video contains a beep);
   - for the camera, use `--use-fake-device-for-media-stream` (never the real webcam). The server must listen on `host: '127.0.0.1'`, otherwise the Windows firewall pops up a dialog. Accept the certificate with `app.on('certificate-error')`.
 - What can't be tested here, for lack of a real iPhone: Safari, the Windows firewall, a Wi-Fi network with a "public" profile.
+- Linux:
+  - Under a Wayland session (`XDG_SESSION_TYPE=wayland`) Electron 44 picks Wayland before `main.js` runs, and `app.commandLine.appendSwitch('ozone-platform', …)` comes too late. `main.js` relaunches itself with `--ozone-platform=x11` (XWayland) unless `--ozone-platform(-hint)` was given; the `.deb` shortcut passes it directly.
+  - A window at opacity 0 counts as hidden on X11: its `requestAnimationFrame` drops to 1 fps. `snap-media.js` uses 0.004 on Linux.
+  - `setContentProtection` does nothing: the SceneCue window shows in the broadcast copy if it sits on the `display` screen.
+  - `scenecue --toggle` and `--scene=N` reach the running instance through `second-instance` (`runCommand`), for desktop shortcuts where X11 global shortcuts don't fire (Wayland).
+  - The X11 window class is `scenecue` (`StartupWMClass` in the `.desktop` file).
 - Color tokens and controls (`.seg`, `.ctl.range`, `.switch`…) are **copied** into `src/renderer/scenecue.css` and each module's CSS, not shared. For visual consistency, change every copy.
 - Media library copies are de-duplicated by name and size. A removal is refused while a layer references the file: the search looks for the file name in the JSON of layer states.

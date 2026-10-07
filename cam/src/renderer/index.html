@@ -97,7 +97,8 @@
           <div class="select-wrap"><select class="select" id="ip"></select></div>
         </div>
         <p class="hint warn" id="srv-error" hidden></p>
-        <p class="hint" data-i18n>Au premier lancement, Windows demande l'accès au réseau : autorise les <b>réseaux privés</b>.</p>
+        <p class="hint" data-os="win" data-i18n>Au premier lancement, Windows demande l'accès au réseau : autorise les <b>réseaux privés</b>.</p>
+        <p class="hint" data-os="linux" data-i18n hidden>Si un pare-feu est actif (ufw, firewalld…), ouvre-lui les ports <b>8443</b> et <b>8080</b>.</p>
       </div>
     </div>
   </section>

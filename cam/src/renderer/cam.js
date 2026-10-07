@@ -13,6 +13,7 @@
   const RES = { 720: [1280, 720], 1080: [1920, 1080], 2160: [3840, 2160] };
   // messages traduits dans l'éditeur (le calque à l'écran n'affiche aucun texte)
   const _ = (s, v) => (window.I18N ? window.I18N.t(s, v) : s);
+  const LINUX = /Linux/.test(navigator.userAgent);
   const ASPECTS = { '16x9': 16 / 9, '4x3': 4 / 3, '1x1': 1, '9x16': 9 / 16 };
 
   const DEFAULT_STATE = {
@@ -87,7 +88,10 @@
     const n = e && e.name;
     if (n === 'NotReadableError' || n === 'TrackStartError') return _('Caméra déjà utilisée par une autre application (Discord, OBS, Teams…). Ferme-la puis clique « Réessayer ».');
     if (n === 'OverconstrainedError' || n === 'NotFoundError') return _('Caméra introuvable : rebranche-la ou choisis-en une autre.');
-    if (n === 'NotAllowedError') return _('Windows bloque la caméra : Paramètres › Confidentialité › Caméra › autoriser les applications de bureau.');
+    if (n === 'NotAllowedError') {
+      return LINUX ? _("Le système refuse l'accès à la caméra.")
+        : _('Windows bloque la caméra : Paramètres › Confidentialité › Caméra › autoriser les applications de bureau.');
+    }
     return (e && e.message) || String(e);
   }
 

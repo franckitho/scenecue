@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>SceneCue — scene control for Discord streams</title>
-  <meta name="description" content="Animated text, images, videos, camera (even your iPhone's) and the song playing on Spotify, on top of your screen or on a broadcast screen, for streaming on Discord. Free, open source, for Windows.">
+  <meta name="description" content="Animated text, images, videos, camera (even your iPhone's) and the song playing on Spotify, on top of your screen or on a broadcast screen, for streaming on Discord. Free, open source, for Windows and Linux.">
   <meta name="theme-color" content="#FF4D1F">
   <meta property="og:type" content="website">
   <meta property="og:site_name" content="SceneCue">
@@ -52,6 +52,7 @@
         </a>
         <a class="btn-2" data-link="repo" href="#">Code source</a>
       </div>
+      <p class="note" data-dl-others hidden></p>
       <p class="note" id="dl-note">Gratuit, open source (licence MIT), sans compte ni publicité.</p>
     </div>
     <figure class="shot">
@@ -164,7 +165,8 @@
     </details>
     <details>
       <summary>Faut-il installer quelque chose ?</summary>
-      <p data-i18n>Non : décompresse le zip où tu veux et lance <code>SceneCue.exe</code>. Tes réglages sont dans <code>%APPDATA%\SceneCue</code> ; supprime ce dossier pour repartir de zéro. Seul l'écran virtuel, en option, demande d'installer un pilote.</p>
+      <p data-i18n>Sous Windows, non : décompresse le zip où tu veux et lance <code>SceneCue.exe</code>. Tes réglages sont dans <code>%APPDATA%\SceneCue</code> ; supprime ce dossier pour repartir de zéro. Seul l'écran virtuel, en option, demande d'installer un pilote.</p>
+      <p data-i18n>Sous Linux, installe le <code>.deb</code> (Ubuntu, Debian…), ou décompresse le <code>.tar.gz</code> et lance <code>scenecue</code>. Tes réglages sont dans <code>~/.config/SceneCue</code>.</p>
     </details>
     <details>
       <summary>L'interface est-elle en anglais ?</summary>
@@ -192,7 +194,7 @@
     </details>
     <details>
       <summary>Et sur Mac ou Linux ?</summary>
-      <p>Windows uniquement pour l'instant. Les contributions sont bienvenues !</p>
+      <p data-i18n><b>Linux</b> : oui, en <code>.deb</code> ou en <code>.tar.gz</code>, sur un bureau avec effets de transparence (GNOME, KDE…). Le module Musique en cours et l'écran virtuel restent pour l'instant réservés à Windows. <b>Mac</b> : pas encore, les contributions sont bienvenues !</p>
     </details>
   </section>
 
