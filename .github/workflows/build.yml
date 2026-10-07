@@ -131,6 +131,7 @@ jobs:
         with:
           path: release
           merge-multiple: true
+          skip-decompress: true # le zip Windows tel quel, pas son contenu
 
       - name: Fichiers
         run: |
