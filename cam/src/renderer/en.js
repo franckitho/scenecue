@@ -15,6 +15,7 @@ I18N.add({
   "Scanne le QR code ci-dessous avec l'appareil photo de l'iPhone.": "Scan the QR code below with the iPhone's camera.",
   "Connexion à l'iPhone…": 'Connecting to the iPhone…',
   'Si rien ne vient, vérifie que Windows autorise SceneCue sur les réseaux privés.': 'If nothing shows up, check that Windows allows SceneCue on private networks.',
+  'Si rien ne vient, vérifie que le pare-feu laisse passer le port {port}.': 'If nothing shows up, check that the firewall lets port {port} through.',
   'Le serveur ne démarre pas': "The server won't start",
   'Caméra indisponible': 'Camera unavailable',
   'Ouverture de la caméra…': 'Opening the camera…',
@@ -55,6 +56,7 @@ I18N.add({
   'Carte réseau': 'Network adapter',
   'virtuelle': 'virtual',
   "Au premier lancement, Windows demande l'accès au réseau : autorise les <b>réseaux privés</b>.": 'On first launch, Windows asks for network access: allow <b>private networks</b>.',
+  'Si un pare-feu est actif (ufw, firewalld…), ouvre-lui les ports <b>8443</b> et <b>8080</b>.': 'If a firewall is active (ufw, firewalld…), open ports <b>8443</b> and <b>8080</b> in it.',
   'démarrage…': 'starting…',
   'arrêté': 'stopped',
   'Serveur : {error}': 'Server: {error}',
@@ -67,6 +69,7 @@ I18N.add({
   'Caméra déjà utilisée par une autre application (Discord, OBS, Teams…). Ferme-la puis clique « Réessayer ».': 'Camera already used by another application (Discord, OBS, Teams…). Close it, then click “Retry”.',
   'Caméra introuvable : rebranche-la ou choisis-en une autre.': 'Camera not found: plug it back in or choose another one.',
   'Windows bloque la caméra : Paramètres › Confidentialité › Caméra › autoriser les applications de bureau.': 'Windows blocks the camera: Settings › Privacy › Camera › allow desktop apps.',
+  "Le système refuse l'accès à la caméra.": 'The system denies access to the camera.',
   "La caméra s'est arrêtée (débranchée ?).": 'The camera stopped (unplugged?).',
 
   // cadrage

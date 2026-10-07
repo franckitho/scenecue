@@ -115,7 +115,7 @@ I18N.add({
   'Direction': 'Direction',
   'Flou': 'Blur',
   'Autre…': 'Other…',
-  'Sélecteur Windows': 'Windows picker',
+  'Sélecteur du système': 'System picker',
 
   // animation
   'Animation': 'Animation',

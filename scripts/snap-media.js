@@ -134,7 +134,8 @@ app.whenReady().then(async () => {
   const isOverlay = (w) => w.webContents.getURL().includes('mode=overlay');
   const main = wins.find((w) => w.webContents.getURL().includes('/src/renderer/index.html'));
   const overlay = wins.find(isOverlay);
-  overlay.setOpacity(0);
+  // Linux (X11) : à l'opacité 0, la fenêtre compte pour cachée et son requestAnimationFrame tombe à 1 image/s
+  overlay.setOpacity(process.platform === 'linux' ? 0.004 : 0);
   // la fenêtre de test peut être recouverte : Chromium mettrait alors en pause les vidéos muettes de l'aperçu
   main.webContents.setBackgroundThrottling(false);
   const save = async (w, name) => fs.writeFileSync(path.join(out, `${name}.png`), (await w.webContents.capturePage()).toPNG());
